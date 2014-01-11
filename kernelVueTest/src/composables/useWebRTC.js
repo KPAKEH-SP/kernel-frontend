@@ -2,12 +2,12 @@ import { useToken } from './useToken';
 import { ref } from 'vue';
 import { useSharedWebStomp } from './useSharedWebStomp';
 import { createSharedComposable } from '@vueuse/core';
-import { useSharedChats } from './useSharedChats';
+import { useCallData } from './useCallData';
 
 export const useWebRTC = createSharedComposable(() => {
     const { stompClient } = useSharedWebStomp();
     const token = useToken();
-    const { currentChat } = useSharedChats();
+    const { callInterlocutor } = useCallData();
 
     const localStream = ref(null);
     const remoteStream = ref(null);
@@ -31,20 +31,14 @@ export const useWebRTC = createSharedComposable(() => {
 
     const handleOffer = async (message) => {
         try {
-            const jsonBody = JSON.parse(message.body);
-            if (jsonBody.chatId !== currentChat.value.chatInfo.chatId) {
-                console.warn("Received offer for different chat ID:", jsonBody.chatId);
-                return;
-            }
-
-            const offerData = JSON.parse(jsonBody.data);
+            const offer = JSON.parse(message.body);
 
             if (peerConnection.signalingState !== "stable") {
                 console.warn("PeerConnection is not in a stable state:", peerConnection.signalingState);
                 return;
             }
 
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(offerData));
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
 
             const answer = await peerConnection.createAnswer();
             console.log("Created Answer SDP:", answer);
@@ -53,13 +47,11 @@ export const useWebRTC = createSharedComposable(() => {
             console.log("Answer SDP set successfully:", peerConnection.localDescription);
 
             const payload = {
-                chatId: jsonBody.chatId,
-                respondentToken: token.value,
-                initiatorUsername: jsonBody.initiatorUsername,
+                senderToken: token.value,
                 data: JSON.stringify(peerConnection.localDescription)
             };
 
-            stompClient.send(`/kernel/webrtc/chat/answer`, JSON.stringify(payload));
+            stompClient.send(`/kernel/webrtc/answer/user/${callInterlocutor.value}`, JSON.stringify(payload));
 
             console.log('CANDIDATES BEFORE HANDLE OFFER >>> ', pendingCandidates);
             pendingCandidates.forEach(candidate => peerConnection.addIceCandidate(candidate));
@@ -103,12 +95,11 @@ export const useWebRTC = createSharedComposable(() => {
         console.log("New ICE candidate:", event.candidate);
         if (event.candidate) {
             const payload = {
-                chatId: currentChat.value.chatInfo.chatId,
-                initiatorToken: token.value,
+                senderToken: token.value,
                 data: JSON.stringify(event.candidate)
             };
 
-            stompClient.send(`/kernel/webrtc/chat/candidate`, JSON.stringify(payload));
+            stompClient.send(`/kernel/webrtc/candidate/user/${callInterlocutor.value}`, JSON.stringify(payload));
         }
     };
 
@@ -118,13 +109,12 @@ export const useWebRTC = createSharedComposable(() => {
             .then(offer => peerConnection.setLocalDescription(offer))
             .then(() => {
                 const payload = {
-                    chatId: currentChat.value.chatInfo.chatId,
-                    initiatorToken: token.value,
+                    senderToken: token.value,
                     data: JSON.stringify(peerConnection.localDescription)
                 };
 
                 console.log('Offer SDP:', JSON.stringify(peerConnection.localDescription));
-                stompClient.send(`/kernel/webrtc/chat/offer`, JSON.stringify(payload));
+                stompClient.send(`/kernel/webrtc/offer/user/${callInterlocutor.value}`, JSON.stringify(payload));
             });
     }
 

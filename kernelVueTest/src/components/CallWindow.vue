@@ -1,7 +1,7 @@
 <template>
     <div ref="root" :class="$style.wrapper" :style="styleList">
         <BaseWidget :class="$style.root">
-            <UserAvatar :username="callRequest.senderUsername" :class="$style.avatar"/>
+            <UserAvatar :username="callRequest.sender" :class="$style.avatar"/>
             <PhPhoneCall @click="emits('callAccepted')" :class="$style.accept" :size="40"/>
             <PhX @click="emits('callRejected')" :class="$style.reject" :size="40"/>
         </BaseWidget>
@@ -12,7 +12,7 @@
     import BaseWidget from './ui/BaseWidget.vue';
     import { PhPhoneCall, PhX } from '@phosphor-icons/vue';
     import { useDraggable } from '@vueuse/core';
-    import { computed, ref, watch } from 'vue';
+    import { computed, ref } from 'vue';
     import UserAvatar from './ui/UserAvatar.vue';
     const startPositionX = window.innerWidth/2-100;
     const startPositionY = window.innerHeight/2-150;

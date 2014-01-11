@@ -13,6 +13,7 @@
     import { useSharedChats } from '@/composables/useSharedChats';
     import { useToken } from '@/composables/useToken';
     import { useCallData } from '@/composables/useCallData';
+    import AudioChat from '@/components/AudioChat.vue';
     
     const { state:userDataState } = useUserData();
     const { stompClient } = useSharedWebStomp();
@@ -37,33 +38,37 @@
         }
     })
     
-    stompClient.subscribe(`/topic/webrtc/user/offer/${userDataState.value.username}`, message => {
+    stompClient.subscribe(`/topic/call/user/${userDataState.value.username}`, message => {
+        const jsonMessage = JSON.parse(message.body);
+        console.log("CALL REQUEST MESSGE >>> ", jsonMessage);
+        if (jsonMessage.type == "REQUEST") {
+            openedCallWindow.value = true;
+            currentCallRequest.value = jsonMessage;
+        } else if (jsonMessage.type == "ACCEPT") {
+            console.log("CALL REQUEST ACCEPTED >>> ", jsonMessage);
+            callInterlocutor.value = jsonMessage.sender;
+            createOffer();
+        } else if (jsonMessage.type == "REJECT") {
+            console.log("CALL REUEST REJECTED >>> ", jsonMessage);
+            openedCallWindow.value = false;
+            callInterlocutor.value = null;
+            currentCallRequest.value = null;
+            disconnect();
+        }
+    });
+
+    stompClient.subscribe(`/topic/webrtc/offer/user/${userDataState.value.username}`, message => {
         openedAudioChat.value = true;
         console.log("OPENED AUDIO CHAT >>> ", openedAudioChat.value);
         handleOffer(message);
     });
 
-    stompClient.subscribe(`/topic/webrtc/user/answer/${userDataState.value.username}`, message => {
+    stompClient.subscribe(`/topic/webrtc/answer/user/${userDataState.value.username}`, message => {
         handleAnswer(message);
     });
 
-    stompClient.subscribe(`/topic/webrtc/user/candidate/${userDataState.value.username}`, message => {
+    stompClient.subscribe(`/topic/webrtc/candidate/user/${userDataState.value.username}`, message => {
         handleCandidate(message);
-    });
-
-    stompClient.subscribe(`/topic/user/call/request/${userDataState.value.username}`, message => {
-        currentCallRequest.value = JSON.parse(message.body);
-        openedCallWindow.value = true;
-        console.log("CURRENT CALL REQUEST >>> ", currentCallRequest.value);
-    });
-    
-    stompClient.subscribe(`/topic/user/call/accept/${userDataState.value.username}`, message => {
-        callInterlocutor.value = currentChat.value.chatInfo.companion;
-        createOffer();
-    });
-
-    stompClient.subscribe(`/topic/user/call/reject/${userDataState.value.usernamee}`, message => {
-        disconnect();
     });
 
     stompClient.subscribe(`/topic/notifications/${userDataState.value.username}`, (message) => {
@@ -71,34 +76,26 @@
         const notification = new Notification("Kernel", { body: text });
     });
 
-
-
     const acceptCall = () => {
-        setCurrentChat(currentCallRequest.value.chatId);
-        openedChatWindow.value = true;
         const payload = {
-            chatId: currentCallRequest.value.chatId,
-            senderToken: token.value,
-            respondentUsername: currentCallRequest.value.senderUsername,
+            sender: token.value,
             type: "ACCEPT"
         };
-        stompClient.send(`/kernel/user/call`, JSON.stringify(payload));
-        callInterlocutor.value = currentCallRequest.value.senderUsername;
+        stompClient.send(`/kernel/call/user/${currentCallRequest.value.sender}`, JSON.stringify(payload));
+        callInterlocutor.value = currentCallRequest.value.sender;
         openedCallWindow.value = false;
     }
 
     const rejectCall = () => {
         disconnect();
         const payload = {
-            chatId: currentCallRequest.value.chatId,
-            senderToken: token.value,
-            respondentUsername: currentCallRequest.value.senderUsername,
+            sender: token.value,
             type: "REJECT"
         };
-        stompClient.send(`/kernel/user/call`, JSON.stringify(payload));
+        stompClient.send(`/kernel/call/user/${currentCallRequest.value.sender}`, JSON.stringify(payload));
         currentCallRequest.value = null;
         openedCallWindow.value = false;
-        openedAudioChat.value = false
+        openedAudioChat.value = false;
     }
 </script>
 
@@ -115,6 +112,10 @@
 
     <Modal v-model:open="openedFriendsPanel">
         <FriendsPanel/>
+    </Modal>
+
+    <Modal v-model:open="openedAudioChat">
+        <AudioChat/>
     </Modal>
 
     <div class="main-container">
