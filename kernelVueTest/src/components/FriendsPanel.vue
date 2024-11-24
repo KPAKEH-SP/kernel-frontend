@@ -40,7 +40,7 @@
     }
 
     .friends-list::-webkit-scrollbar {
-        display: none; /* Для Chrome, Safari */
+        display: none;
     }
 
     .friend {

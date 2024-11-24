@@ -15,7 +15,7 @@
     const chats = ref([]);
     const messages = ref([]);
     const newMessage = ref('');
-    let stompClient = null;
+    const stompClient = ref(null);
     const currentChatId = ref();
 
     const openedAccountPanel = ref(false);
@@ -23,12 +23,20 @@
     
     
     const updateChats = (chatsResponse) => {
+        chats.value = [];
+
         chatsResponse.data.forEach(chat => {
             if (chat.users.length == 2){
+                let updatedChats = [];
+
                 chat.users.forEach(user => {
                     if (user.username != username.value){
-                        chats.value.push({chatName: user.username, chatInfo: chat})
+                        updatedChats.push({chatName: user.username, chatInfo: chat})
                     }
+                });
+
+                updatedChats.forEach(chat => {
+                    chats.value.push(chat);
                 });
             }
         });
@@ -131,32 +139,44 @@
 
     const connectToStompChat = (chatId) => {
         const socket = new SockJS('http://localhost:8080/ws');
-        stompClient = Webstomp.over(socket);
+        stompClient.value = Webstomp.over(socket);
 
         currentChatId.value = chatId;
 
-        stompClient.connect({}, () => {
-            console.log('Connected to WebSocket');
-
-            stompClient.subscribe(`/topic/chat/${chatId}`, (message) => {
-            const receivedMessage = JSON.parse(message.body);
-            messages.value.push(receivedMessage);
+        stompClient.value.connect({}, () => {
+            stompClient.value.subscribe(`/topic/chat/history/${chatId}`, (message) => {
+                const historyMessages = JSON.parse(message.body);
+                console.log('===================')
+                console.log(historyMessages);
+                console.log('===================')
+                messages.value = historyMessages;
             });
+
+            stompClient.value.subscribe(`/topic/chat/${chatId}`, (message) => {
+                const receivedMessage = JSON.parse(message.body);
+                messages.value.push(receivedMessage);
+            });
+
+            stompClient.value.send(`/kernel/chat/history/${chatId}`, {}, {});
+
+            console.log('----------------')
+            console.log(messages.value)
+            console.log('----------------')
         }, (error) => {
             console.error('WebSocket connection error:', error);
         });
     };
 
     const sendMessage = () => {
-        if (newMessage.value.trim() && stompClient && stompClient.connected) {
+        if (newMessage.value.trim() && stompClient.value && stompClient.value.connected) {
             let chatId = currentChatId.value;
 
             const payload = {
-                sender: username.value, // Replace with dynamic sender info if needed
-                content: newMessage.value, chatId
+                sender: storageToken,
+                content: newMessage.value
             };
-            stompClient.send(`/app/chat/${chatId}`, JSON.stringify(payload));
-            newMessage.value = ''; // Clear the input field
+            stompClient.value.send(`/kernel/chat/${chatId}`, JSON.stringify(payload));
+            newMessage.value = '';
         }
     };
 
@@ -200,7 +220,19 @@
                 <div class="chat-settings">
 
                 </div>
-                <div class="messages"></div>
+                <div class="messages">
+                    <div v-for="(message, index) in messages" :key="index" class="message">
+                        <div class="author-info">
+                            {{ message.sender }}
+                        </div>
+                        <div class="content">
+                            {{ message.content }}
+                        </div>
+                        <div class="timestamp">
+                            {{message.timestamp}}
+                        </div>
+                    </div>
+                </div>
                 <div class="message-panel">
                     <input v-model="newMessage" class="message-input" type="text" placeholder="enter message">
                     <button @click="sendMessage()" class="message-button">Send</button>

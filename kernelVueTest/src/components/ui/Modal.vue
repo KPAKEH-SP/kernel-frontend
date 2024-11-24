@@ -7,14 +7,15 @@
         <div v-if="isOpened" class="modal-blur"></div>
     </transition>
     
-    <div v-if="isOpened" class="modal">
+    <dialog :open="isOpened" class="modal">
         <button class="close-button" @click="isOpened=false">X</button>
         <slot></slot>
-    </div>
+    </dialog>
 </template>
 
 <style>
     .modal {
+        color: #ffffff;
         position: fixed;
         top: 50%;
         left: 50%;
@@ -68,7 +69,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5); /* Конечный цвет фона */
+        background-color: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(5px);
         z-index: 999; 
     }
@@ -83,12 +84,12 @@
 
     @keyframes blur-in {
         0% {
-            background-color: rgba(0, 0, 0, 0);
-            backdrop-filter: blur(0px);
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
         }
         100% {
             background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+            opacity: 100;
         }
     }
 </style>

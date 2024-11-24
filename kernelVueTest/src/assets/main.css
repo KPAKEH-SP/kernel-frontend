@@ -376,5 +376,28 @@ body {
 }
 
 .messages {
+  display: flex;
   flex-grow: 1;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.messages::-webkit-scrollbar {
+  display: none;
+}
+
+.message {
+  border: solid #fff;
+  border-radius: 2vh;
+  margin: 1%;
+  padding: 1%;
+}
+
+.message .author-info {
+  color: #959595;
+}
+
+.message .timestamp {
+  color: #555555;
 }
