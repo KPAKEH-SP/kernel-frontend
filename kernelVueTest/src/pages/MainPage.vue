@@ -20,6 +20,11 @@
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
+    const openedChatsPanel = ref(false);
+    const openedChatWindow = ref(false);
+
+    let historySubscription = null;
+    let chatSubscription = null;
     
     
     const updateChats = (chatsResponse) => {
@@ -100,12 +105,6 @@
 
     checkToken();
 
-    const blur = ref(false);
-
-    const showElement = (elementId) => {
-        document.getElementById(elementId).style.display = "flex";
-    }
-
     const removeFriend = async (friendUsername) => {
         try {
             if (storageToken != null) {
@@ -138,30 +137,33 @@
     }
 
     const connectToStompChat = (chatId) => {
+        if (historySubscription) {
+            historySubscription.unsubscribe();
+            historySubscription = null;
+        }
+        if (chatSubscription) {
+            chatSubscription.unsubscribe();
+            chatSubscription = null;
+        }
+
         const socket = new SockJS('http://localhost:8080/ws');
         stompClient.value = Webstomp.over(socket);
 
         currentChatId.value = chatId;
 
         stompClient.value.connect({}, () => {
-            stompClient.value.subscribe(`/topic/chat/history/${chatId}`, (message) => {
+            historySubscription = stompClient.value.subscribe(`/topic/chat/history/${chatId}`, (message) => {
                 const historyMessages = JSON.parse(message.body);
-                console.log('===================')
-                console.log(historyMessages);
-                console.log('===================')
                 messages.value = historyMessages;
             });
 
-            stompClient.value.subscribe(`/topic/chat/${chatId}`, (message) => {
+            chatSubscription = stompClient.value.subscribe(`/topic/chat/${chatId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 messages.value.push(receivedMessage);
             });
 
+            openedChatWindow.value = true;
             stompClient.value.send(`/kernel/chat/history/${chatId}`, {}, {});
-
-            console.log('----------------')
-            console.log(messages.value)
-            console.log('----------------')
         }, (error) => {
             console.error('WebSocket connection error:', error);
         });
@@ -208,15 +210,15 @@
         <div class="servers-panel">
             <button @click="openedAccountPanel = true">Acc</button>
             <button @click="openedFriendsPanel = true">Frnds</button>
-            <button @click="showElement('chats-panel')">Chats</button>
+            <button @click="openedChatsPanel = (!openedChatsPanel)">Chats</button>
         </div>
         <div class="main-plane">
-            <div id="chats-panel" class="chats-panel">
+            <div v-if="openedChatsPanel" id="chats-panel" class="chats-panel">
                 <div v-for="chat in chats">
                     <PrimaryButton @click="connectToStompChat(chat.chatInfo.chatId)" :text='chat.chatName' size="" color=""/>
                 </div>
             </div>
-            <div class="chat-window">
+            <div v-if="openedChatWindow" class="chat-window">
                 <div class="chat-settings">
 
                 </div>
@@ -229,7 +231,7 @@
                             {{ message.content }}
                         </div>
                         <div class="timestamp">
-                            {{message.timestamp}}
+                            {{ message.timestamp }}
                         </div>
                     </div>
                 </div>
