@@ -7,7 +7,7 @@
         <div v-if="isOpened" class="modal-blur"></div>
     </transition>
     
-    <dialog :open="isOpened" class="modal">
+    <dialog v-if="isOpened" :open="isOpened" class="modal">
         <button class="close-button" @click="isOpened=false">X</button>
         <slot></slot>
     </dialog>
@@ -15,6 +15,8 @@
 
 <style>
     .modal {
+        display: flex;
+        flex-direction: column;
         color: #ffffff;
         position: fixed;
         top: 50%;
