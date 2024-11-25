@@ -122,6 +122,34 @@
         }
     }
 
+    const addFriend = (friendName) => {
+        axios.post('http://localhost:8080/api/friends/add', {
+                        token: storageToken,
+                        friendName: friendName
+                    })
+                    .then(function (response) {
+                        friends.value = response.data.body;
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+    }
+
+    const acceptFriend = (friendName) => {
+        axios.post('http://localhost:8080/api/friends/accept', {
+                        token: storageToken,
+                        friendUsername: friendName
+                    })
+                    .then(function (response) {
+                        friends.value = response.data.body;
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+    }
+
     const chat = async (friendUsername) => {
         axios.post('http://localhost:8080/api/chats/create', {
             token: storageToken,
@@ -169,6 +197,23 @@
         });
     };
 
+    const connectToFriendsRequests = () => {
+        const socket = new SockJS('http://localhost:8080/ws'); // Замените на ваш backend
+        const stompClient = Webstomp.over(socket);
+
+        stompClient.connect({}, () => {
+            console.log('WebSocket connected!');
+            stompClient.subscribe(`/topic/requests/friend/${username.value}`, (message) => {
+                getFriends();
+                console.log(message);
+            });
+        });
+
+        return stompClient;
+    }
+
+    connectToFriendsRequests();
+
     const sendMessage = () => {
         if (newMessage.value.trim() && stompClient.value && stompClient.value.connected) {
             let chatId = currentChatId.value;
@@ -181,20 +226,6 @@
             newMessage.value = '';
         }
     };
-
-    const addFriend = (friendName) => {
-        axios.post('http://localhost:8080/api/friends/add', {
-                        token: storageToken,
-                        friendName: friendName
-                    })
-                    .then(function (response) {
-                        friends.value = response.data.body;
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-    }
 </script>
 
 <template>
@@ -203,7 +234,12 @@
     </Modal>
 
     <Modal v-model:open="openedFriendsPanel">
-        <FriendsPanel :friends="friends" @openChat="chat" @removeFriend="removeFriend" @addFriend="addFriend"/>
+        <FriendsPanel :username="username"
+        v-model:friends="friends"
+        @openChat="chat" 
+        @removeFriend="removeFriend"
+        @addFriend="addFriend" 
+        @accept="acceptFriend"/>
     </Modal>
 
     <div class="main-container">

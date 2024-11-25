@@ -3,11 +3,15 @@
     import PrimaryButton from './ui/PrimaryButton.vue';
     
     const props = defineProps({
-        friends:{type:Array, required:true}
+        username:{type:String, required:true}
     });
     
-    const emit = defineEmits();
+    const friends = defineModel('friends', { type: Array, default: false });
+
+    const emit = defineEmits(["addFriend", "openChat", "removeFriend", "accept"]);
     const friendName = ref('');
+    const openedFriendsList = ref(true);
+    const openedRequestsList = ref(false);
 </script>
 
 <template>
@@ -16,18 +20,40 @@
         <PrimaryButton @click="emit('addFriend', friendName)" text='add to friend' size="" color=""/>
     </div>
 
-    <div class="friends-list">
-        <div v-for="friend in props.friends" :key="friend.id" class="friend">
-            <div class="friend-avatar">A</div>
-            <div class="friend-name">{{ friend.username }}</div>
-            <PrimaryButton @click="emit('openChat', friend.username)" text='chat' size="" color=""/>
-            <PrimaryButton @click="emit('removeFriend', friend.username)" text="remove" size="" color="red"/>
+    <div class="pages">
+        <PrimaryButton @click="openedFriendsList = true, openedRequestsList = false" text="friends" size="" color=""/>
+        <PrimaryButton @click="openedRequestsList = true, openedFriendsList = false" text="requests" size="" color=""/>    
+    </div>
+
+    <div v-if="openedFriendsList" class="list">
+        <div v-for="friend in friends" :key="friend.id">
+            <div v-if="friend.status == 'ACCEPTED'" class="friend">
+                <div class="friend-avatar">A</div>
+                <div class="friend-name">{{ friend.user.username }}</div>
+                <PrimaryButton @click="emit('openChat', friend.user.username)" text='chat' size="" color=""/>
+                <PrimaryButton @click="emit('removeFriend', friend.user.username)" text="remove" size="" color="red"/>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="openedRequestsList" class="list">
+        <div v-for="friend in friends" :key="friend.id">
+            <div v-if="friend.status == 'PENDING'" class="friend">
+                <div class="friend-avatar">A</div>
+                <div class="friend-name">{{ friend.user.username }}</div>
+                <PrimaryButton v-if="friend.pendingFrom.username != username" @click="emit('accept', friend.user.username)" text='accept' size="" color=""/>
+                <div v-else>
+                    sended
+                </div>
+                <PrimaryButton v-if="friend.pendingFrom.username != username" @click="emit('removeFriend', friend.user.username)" text="dismiss" size="" color="red"/>
+                <PrimaryButton v-else @click="emit('removeFriend', friend.user.username)" text="cancel" size="" color="red"/>
+            </div>
         </div>
     </div>
 </template>
 
 <style>
-    .friends-list {
+    .list {
         display: flex;
         flex-direction: column;
         overflow-y: auto;
@@ -36,7 +62,7 @@
         padding: 10px;
         box-sizing: border-box;
         scrollbar-width: none;
-        height: 87%;
+        flex-grow: 1;
     }
 
     .friends-list::-webkit-scrollbar {
@@ -101,5 +127,11 @@
         border-right: solid;
         border-bottom: solid;
         color: #ff4343;
+    }
+
+    .pages {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>

@@ -1,5 +1,6 @@
 <script setup>
     import PrimaryButton from './ui/PrimaryButton.vue';
+    import { router } from '@/router';
 
     const props = defineProps({
         username:{type:String, required:true}
