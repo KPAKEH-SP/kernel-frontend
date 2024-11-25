@@ -219,9 +219,6 @@
                 </div>
             </div>
             <div v-if="openedChatWindow" class="chat-window">
-                <div class="chat-settings">
-
-                </div>
                 <div class="messages">
                     <div v-for="(message, index) in messages" :key="index" class="message">
                         <div class="author-info">
@@ -236,7 +233,7 @@
                     </div>
                 </div>
                 <div class="message-panel">
-                    <input v-model="newMessage" class="message-input" type="text" placeholder="enter message">
+                    <input v-on:keyup.enter="sendMessage()" v-model="newMessage" class="message-input" type="text" placeholder="enter message">
                     <button @click="sendMessage()" class="message-button">Send</button>
                 </div>
             </div>
