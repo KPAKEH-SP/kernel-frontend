@@ -198,12 +198,12 @@
     };
 
     const connectToFriendsRequests = () => {
-        const socket = new SockJS('http://localhost:8080/ws'); // Замените на ваш backend
-        const stompClient = Webstomp.over(socket);
+        const socket = new SockJS('http://localhost:8080/ws');
+        stompClient.value = Webstomp.over(socket);
 
-        stompClient.connect({}, () => {
+        stompClient.value.connect({}, () => {
             console.log('WebSocket connected!');
-            stompClient.subscribe(`/topic/requests/friend/${username.value}`, (message) => {
+            stompClient.value.subscribe(`/topic/requests/friend/${username.value}`, (message) => {
                 getFriends();
                 console.log(message);
             });
@@ -226,6 +226,16 @@
             newMessage.value = '';
         }
     };
+
+    const deleteMessage = (messageId) => {
+        axios.post('http://localhost:8080/api/chat/' + currentChatId.value +'/messages/delete/' + messageId)
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+    }
 </script>
 
 <template>
@@ -255,16 +265,26 @@
                 </div>
             </div>
             <div v-if="openedChatWindow" class="chat-window">
+                <div class="chat-settings">
+                
+                </div>
                 <div class="messages">
                     <div v-for="(message, index) in messages" :key="index" class="message">
-                        <div class="author-info">
-                            {{ message.sender }}
+                        <div class="message-info">
+                            <div class="author-info">
+                                {{ message.sender }}
+                            </div>
+                            <div class="content">
+                                {{ message.content }}
+                            </div>
+                            <div class="timestamp">
+                                {{ message.timestamp }}
+                            </div>
                         </div>
-                        <div class="content">
-                            {{ message.content }}
-                        </div>
-                        <div class="timestamp">
-                            {{ message.timestamp }}
+                        <div class="message-control">
+                            <div class="delete-message">
+                                <PrimaryButton @click="deleteMessage(message.messageId)" text="del" size="" color="red"/>
+                            </div>
                         </div>
                     </div>
                 </div>

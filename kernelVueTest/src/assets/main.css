@@ -385,6 +385,7 @@ body {
 }
 
 .message {
+  display: flex;
   border: solid #fff;
   border-radius: 2vh;
   margin: 1%;
@@ -397,4 +398,13 @@ body {
 
 .message .timestamp {
   color: #555555;
+}
+
+.message-info {
+  flex-grow: 1;
+}
+
+.message-control {
+  display: flex;
+  align-items: center;
 }
