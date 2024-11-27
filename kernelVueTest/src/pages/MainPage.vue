@@ -254,14 +254,28 @@
 
     <div class="main-container">
         <div class="servers-panel">
-            <button @click="openedAccountPanel = true">Acc</button>
-            <button @click="openedFriendsPanel = true">Frnds</button>
-            <button @click="openedChatsPanel = (!openedChatsPanel)">Chats</button>
+            <div class="servers-list">
+                <button @click="openedFriendsPanel = true">Frnds</button>
+                <button @click="openedChatsPanel = (!openedChatsPanel)">Chats</button>
+            </div>
+            <button class="account-button" @click="openedAccountPanel = true">
+                Acc
+                <div class="status">
+                    
+                </div>
+            </button>
         </div>
         <div class="main-plane">
             <div v-if="openedChatsPanel" id="chats-panel" class="chats-panel">
-                <div v-for="chat in chats">
-                    <PrimaryButton @click="connectToStompChat(chat.chatInfo.chatId)" :text='chat.chatName' size="" color=""/>
+                <div class="chat" v-for="chat in chats">
+                    
+                    <button class="chat-button" @click="connectToStompChat(chat.chatInfo.chatId)">
+                        <div class="chat-avatar">
+                        </div> 
+                        <div class="chat-name">
+                            {{ chat.chatName }} 
+                        </div>
+                    </button>
                 </div>
             </div>
             <div v-if="openedChatWindow" class="chat-window">
