@@ -284,6 +284,9 @@
                 </div>
                 <div class="messages">
                     <div v-for="(message, index) in messages" :key="index" class="message">
+                        <div class="user-avatar">
+                            
+                        </div>
                         <div class="message-info">
                             <div class="author-info">
                                 {{ message.sender }}
