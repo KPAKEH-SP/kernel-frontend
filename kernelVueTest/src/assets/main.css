@@ -250,6 +250,18 @@ body {
   align-items: center; /* Центрирование по горизонтали */
 }
 
+.servers-list {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: none;
+  flex-grow: 1;
+}
+
+.servers-list::-webkit-scrollbar {
+  display: none;
+}
+
 .servers-panel button {
   width: 50px;
   height: 50px;
@@ -263,8 +275,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   transition: all 0.5s ease;
 }
 
@@ -272,6 +284,22 @@ body {
   box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
   border-color: #00ffff;
   color: #00ffff;
+}
+
+.account-button {
+  position: relative; /* Относительное позиционирование для родителя */
+  padding: 10px;
+  display: inline-block;
+}
+
+.status {
+  height: 10px;
+  width: 10px;
+  background-color: #43ff43;
+  border-radius: 50%;
+  position: absolute; /* Абсолютное позиционирование */
+  bottom: 1px; /* Отступ от нижнего края кнопки */
+  right: 1px; /* Отступ от правого края кнопки */
 }
 /*
 --- main plane ---
@@ -284,12 +312,47 @@ body {
 }
 
 .chats-panel {
-  width: 10%;
+  width: 15%;
   height: 100%;
   border-right: 3px solid #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.chat {
+  display: flex;
+  width: 98%;
+  margin: 2%;
+}
+
+.chat-avatar {
+  height: 50px;
+  width: 50px;
+  border: solid #fff 1px;
+  border-radius: 50%;
+}
+
+.chat-name {
+  margin-left: 5%;
+  align-self: center;
+}
+
+.chat-button {
+  display: flex;
+  flex-grow: 1;
+  background: transparent;
+  border: solid #fff 2px;
+  color: #fff;
+  border-radius: 5px;
+  transition: all 0.5s ease;
+}
+
+.chat-button:hover {
+  border-radius: 10vh;
+  box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
+  border-color: #00ffff;
+  color: #00ffff;
 }
 
 .chat-window {
@@ -408,3 +471,4 @@ body {
   display: flex;
   align-items: center;
 }
+
