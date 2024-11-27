@@ -17,6 +17,7 @@
     const newMessage = ref('');
     const stompClient = ref(null);
     const currentChatId = ref();
+    const userAvatar = ref(localStorage.getItem('user-avatar'));
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
@@ -240,7 +241,8 @@
 
 <template>
     <Modal v-model:open="openedAccountPanel">
-        <AccountPanel :username="username"/>
+        <AccountPanel :username="username"
+        :token="storageToken"/>
     </Modal>
 
     <Modal v-model:open="openedFriendsPanel">

@@ -24,7 +24,7 @@
         transform: translate(-50%, -50%);
         width: 60vw;
         height: 60vh;
-        background-color: transparent;
+        background-color: #000;
         border: 3px solid #00ffff;
         border-radius: 35px;
         box-shadow: #00ffff 0 0 7px;

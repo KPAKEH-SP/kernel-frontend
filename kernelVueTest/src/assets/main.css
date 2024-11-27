@@ -3,7 +3,7 @@
 /*
 --- sphere ---
 */
-.circles {
+  .circles {
     height: 55vmin;
     width: 55vmin;
     position: absolute;
@@ -25,31 +25,30 @@
     border-radius: 115% 140% 145% 110%/125% 140% 110% 125%;
     mix-blend-mode: screen;
     pointer-events: none;
+    box-shadow: #00ffff 0 0 10px, inset #00ffff 0 0 10px;
   }
+
   .circle:nth-child(1) {
     border-color: #00ffff;
-    box-shadow: #00ffff 0 0 10px, inset #00ffff 0 0 10px;
+    
     transform-origin: 50% 50%;
     -webkit-animation: spin1 5.5s linear infinite;
             animation: spin1 5.5s linear infinite;
   }
   .circle:nth-child(2) {
     border-color: #00b6b6;
-    box-shadow: #00ffff 0 0 10px, inset #00ffff 0 0 10px;
     transform-origin: 50% 50%;
     -webkit-animation: spin2 5.5s linear infinite;
             animation: spin2 5.5s linear infinite;
   }
   .circle:nth-child(3) {
     border-color: #009c9c;
-    box-shadow: #00ffff 0 0 10px, inset #00ffff 0 0 10px;
     transform-origin: 50% 50%;
     -webkit-animation: spin3 5.5s linear infinite;
             animation: spin3 5.5s linear infinite;
   }
   .circle:nth-child(4) {
     border-color: #006868;
-    box-shadow: #00ffff 0 0 10px, inset #00ffff 0 0 10px;
     transform-origin: 50% 50%;
     -webkit-animation: spin4 5.5s linear infinite;
             animation: spin4 5.5s linear infinite;
