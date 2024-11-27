@@ -44,13 +44,11 @@
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-                responseType: 'blob' // Указываем, что ожидаем получить бинарные данные (Blob)
+                responseType: 'blob'
             });
             
-            // Логируем весь ответ для анализа
             console.log(response);
 
-            // Получаем данные как Blob и конвертируем в Base64
             avatarBase64.value = await fileToBase64(response.data);
             localStorage.setItem("user-avatar", avatarBase64.value);
 
@@ -112,12 +110,12 @@
     }
 
     .avatar-image {
-        position: absolute; /* Абсолютное позиционирование для масштабирования */
+        position: absolute;
         top: 0;
         left: 0;
-        width: 100%; /* Масштаб по ширине кнопки */
-        height: 100%; /* Масштаб по высоте кнопки */
-        object-fit: cover; /* Обеспечивает обрезку изображения по кнопке */
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         border-radius: 50%;
     }
 

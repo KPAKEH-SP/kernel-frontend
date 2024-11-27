@@ -17,7 +17,7 @@
     const newMessage = ref('');
     const stompClient = ref(null);
     const currentChatId = ref();
-    const userAvatar = ref();
+    const userAvatar = ref(localStorage.getItem('user-avatar'));
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
@@ -82,20 +82,6 @@
              console.log(error);
         }
     }
-
-    const getAvatar = async () => {
-        try {
-            if (storageToken != null) {
-                await axios.get("http://localhost:8080/api/users/avatar/get/" + username.value)
-                .then(function(response) {
-                    userAvatar.value = response.body;
-                    console.log(friends);
-                });
-            }
-        } catch (error) {
-             console.log(error);
-        }
-    }
     
     const checkToken = async () => {
         try {
@@ -108,7 +94,6 @@
                     username.value = response.data.username;
                     getFriends();
                     getChats();
-                    getAvatar();
                 });
             } else {
                 throw new Error("СУКА, ЕЩЁ РАЗ ПУСТОЙ ТОКЕН ОТПРАВИШЬ, РУКИ ОТОРВУ!");
