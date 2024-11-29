@@ -1,6 +1,7 @@
 <script setup>
     import { ref } from 'vue';
     import PrimaryButton from './ui/PrimaryButton.vue';
+    import axios, { AxiosError } from 'axios';
     
     const props = defineProps({
         username:{type:String, required:true}
@@ -27,26 +28,30 @@
 
     <div v-if="openedFriendsList" class="list">
         <div v-for="friend in friends" :key="friend.id">
-            <div v-if="friend.status == 'ACCEPTED'" class="friend">
-                <div class="friend-avatar">A</div>
-                <div class="friend-name">{{ friend.user.username }}</div>
-                <PrimaryButton @click="emit('openChat', friend.user.username)" text='chat' size="" color=""/>
-                <PrimaryButton @click="emit('removeFriend', friend.user.username)" text="remove" size="" color="red"/>
+            <div v-if="friend.friendObj.status == 'ACCEPTED'" class="friend">
+                <div class="friend-avatar">
+                    <img :src="friend.friendAvatar" class="avatar-image" />
+                </div>
+                <div class="friend-name">{{ friend.friendObj.user.username }}</div>
+                <PrimaryButton @click="emit('openChat', friend.friendObj.user.username)" text='chat' size="" color=""/>
+                <PrimaryButton @click="emit('removeFriend', friend.friendObj.user.username)" text="remove" size="" color="red"/>
             </div>
         </div>
     </div>
 
     <div v-if="openedRequestsList" class="list">
         <div v-for="friend in friends" :key="friend.id">
-            <div v-if="friend.status == 'PENDING'" class="friend">
-                <div class="friend-avatar">A</div>
-                <div class="friend-name">{{ friend.user.username }}</div>
-                <PrimaryButton v-if="friend.pendingFrom.username != username" @click="emit('accept', friend.user.username)" text='accept' size="" color=""/>
+            <div v-if="friend.friendObj.status == 'PENDING'" class="friend">
+                <div class="friend-avatar">
+                    <img :src="friend.friendAvatar" class="avatar-image" />
+                </div>
+                <div class="friend-name">{{ friend.friendObj.user.username }}</div>
+                <PrimaryButton v-if="friend.friendObj.pendingFrom.username != username" @click="emit('accept', friend.friendObj.user.username)" text='accept' size="" color=""/>
                 <div v-else>
                     sended
                 </div>
-                <PrimaryButton v-if="friend.pendingFrom.username != username" @click="emit('removeFriend', friend.user.username)" text="dismiss" size="" color="red"/>
-                <PrimaryButton v-else @click="emit('removeFriend', friend.user.username)" text="cancel" size="" color="red"/>
+                <PrimaryButton v-if="friend.friendObj.pendingFrom.username != username" @click="emit('removeFriend', friend.user.username)" text="dismiss" size="" color="red"/>
+                <PrimaryButton v-else @click="emit('removeFriend', friend.friendObj.user.username)" text="cancel" size="" color="red"/>
             </div>
         </div>
     </div>
@@ -80,11 +85,15 @@
     }
 
     .friend-avatar {
-        align-items: center;
+        height: 50px;
+        width: 50px;
+        border: solid #fff 1px;
+        border-radius: 50%;
         justify-content: center;
-        text-align: center;
-        width: 10%;
-        border: #ff4343 solid 2px;
+        align-items: center;
+        position: relative;
+        display: flex;
+        align-items: center;
     }
 
     .friend-name {
