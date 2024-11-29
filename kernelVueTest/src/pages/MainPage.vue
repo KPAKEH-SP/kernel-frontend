@@ -60,7 +60,7 @@
 
                 for (const user of chat.users) {
                     if (user.username != username.value) {
-                        const avatar = await getAvatar(user.username); // await теперь работает здесь
+                        const avatar = await getAvatar(user.username);
                         updatedChats.push({ chatAvatar: avatar, chatName: user.username, chatInfo: chat });
                     }
                 }
@@ -223,12 +223,22 @@
         stompClient.value.connect({}, () => {
             historySubscription = stompClient.value.subscribe(`/topic/chat/history/${chatId}`, (message) => {
                 const historyMessages = JSON.parse(message.body);
-                messages.value = historyMessages;
+                messages.value = [];
+                for(const message of historyMessages) {
+                    getAvatar(message.sender).then((avatar) => {
+                        const newMessage = {senderAvatar: avatar, data: message};
+                        messages.value.push(newMessage);
+                    });
+                }
+                console.log(messages);
             });
 
             chatSubscription = stompClient.value.subscribe(`/topic/chat/${chatId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
-                messages.value.push(receivedMessage);
+                getAvatar(receivedMessage.sender).then((avatar) => {
+                        const newMessage = {senderAvatar: avatar, data: receivedMessage};
+                        messages.value.push(newMessage);
+                    });
             });
 
             openedChatWindow.value = true;
@@ -270,12 +280,12 @@
 
     const deleteMessage = (messageId) => {
         axios.post('http://localhost:8080/api/chat/' + currentChatId.value +'/messages/delete/' + messageId)
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 </script>
 
@@ -331,22 +341,22 @@
                 <div class="messages">
                     <div v-for="(message, index) in messages" :key="index" class="message">
                         <div class="user-avatar">
-                            
+                            <img :src="message.senderAvatar" class="avatar-image" />
                         </div>
                         <div class="message-info">
                             <div class="author-info">
-                                {{ message.sender }}
+                                {{ message.data.sender }}
                             </div>
                             <div class="content">
-                                {{ message.content }}
+                                {{ message.data.content }}
                             </div>
                             <div class="timestamp">
-                                {{ message.timestamp }}
+                                {{ message.data.timestamp }}
                             </div>
                         </div>
                         <div class="message-control">
                             <div class="delete-message">
-                                <PrimaryButton @click="deleteMessage(message.messageId)" text="del" size="" color="red"/>
+                                <PrimaryButton @click="deleteMessage(message.data.messageId)" text="del" size="" color="red"/>
                             </div>
                         </div>
                     </div>
