@@ -28,28 +28,52 @@
     let chatSubscription = null;
     
     
-    const updateChats = (chatsResponse) => {
+    const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    }
+
+
+    const getAvatar = async (user) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/users/avatar/get/${user}`, {
+                responseType: 'blob'
+            });
+
+            const avatar = await fileToBase64(response.data);
+            return avatar;
+        } catch (error) {
+            console.error('Ошибка получения аватарки:', error);
+        }
+    }
+
+    const updateChats = async (chatsResponse) => {
         chats.value = [];
 
-        chatsResponse.data.forEach(chat => {
-            if (chat.users.length == 2){
+        for (const chat of chatsResponse.data) {
+            if (chat.users.length == 2) {
                 let updatedChats = [];
 
-                chat.users.forEach(user => {
-                    if (user.username != username.value){
-                        updatedChats.push({chatName: user.username, chatInfo: chat})
+                for (const user of chat.users) {
+                    if (user.username != username.value) {
+                        const avatar = await getAvatar(user.username); // await теперь работает здесь
+                        updatedChats.push({ chatAvatar: avatar, chatName: user.username, chatInfo: chat });
                     }
-                });
+                }
 
-                updatedChats.forEach(chat => {
-                    chats.value.push(chat);
+                updatedChats.forEach(updatedChat => {
+                    chats.value.push(updatedChat);
                 });
             }
-        });
+        }
 
         console.log('Chats list formed: ');
         console.log(chats);
-    }
+    };
 
     const getChats = async () => {
         try {
@@ -66,6 +90,19 @@
                 console.log(error);
         }
     }
+    
+    const updateFriends = async (friendsResponse) => {
+        friends.value = [];
+
+        let updatedFriends = [];
+        
+        for (const friend of friendsResponse) {
+            const avatar = await getAvatar(friend.user.username);
+            updatedFriends.push({friendAvatar: avatar, friendObj: friend});
+        }
+
+        friends.value = updatedFriends;
+    }
 
     const getFriends = async () => {
         try {
@@ -74,7 +111,7 @@
                     token: storageToken
                 })
                 .then(function(response) {
-                    friends.value = response.data;
+                    updateFriends(response.data);
                     console.log(friends);
                 });
             }
@@ -94,6 +131,9 @@
                     username.value = response.data.username;
                     getFriends();
                     getChats();
+                    getAvatar(username.value).then((avatar) => {
+                        userAvatar.value = avatar;
+                    });
                 });
             } else {
                 throw new Error("СУКА, ЕЩЁ РАЗ ПУСТОЙ ТОКЕН ОТПРАВИШЬ, РУКИ ОТОРВУ!");
@@ -114,7 +154,7 @@
                     userToken: storageToken
                 })
                 .then(function(response) {
-                    friends.value = response.data.body;
+                    updateFriends(response.data.body);
                     console.log(friends);
                 });
             }
@@ -125,30 +165,30 @@
 
     const addFriend = (friendName) => {
         axios.post('http://localhost:8080/api/friends/add', {
-                        token: storageToken,
-                        friendName: friendName
-                    })
-                    .then(function (response) {
-                        friends.value = response.data.body;
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+            token: storageToken,
+            friendName: friendName
+        })
+        .then(function (response) {
+            updateFriends(response.data.body);
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
     const acceptFriend = (friendName) => {
         axios.post('http://localhost:8080/api/friends/accept', {
-                        token: storageToken,
-                        friendUsername: friendName
-                    })
-                    .then(function (response) {
-                        friends.value = response.data.body;
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+            token: storageToken,
+            friendUsername: friendName
+        })
+        .then(function (response) {
+            updateFriends(response.data.body);
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
     const chat = async (friendUsername) => {
@@ -242,7 +282,8 @@
 <template>
     <Modal v-model:open="openedAccountPanel">
         <AccountPanel :username="username"
-        :token="storageToken"/>
+        :token="storageToken"
+        v-model:avatar="userAvatar"/>
     </Modal>
 
     <Modal v-model:open="openedFriendsPanel">
@@ -262,6 +303,8 @@
             </div>
             <button class="account-button" @click="openedAccountPanel = true">
                 Acc
+                <img :src="userAvatar" alt="Avatar" class="avatar-image" />
+
                 <div class="status">
                     
                 </div>
@@ -273,9 +316,10 @@
                     
                     <button class="chat-button" @click="connectToStompChat(chat.chatInfo.chatId)">
                         <div class="chat-avatar">
+                            <img :src="chat.chatAvatar" class="avatar-image" />
                         </div> 
                         <div class="chat-name">
-                            {{ chat.chatName }} 
+                            {{ chat.chatName }}
                         </div>
                     </button>
                 </div>

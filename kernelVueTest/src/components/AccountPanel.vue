@@ -5,7 +5,8 @@
     import axios from 'axios';
 
     const showCircles = ref(false);
-    const avatarBase64 = ref(localStorage.getItem('user-avatar'));
+
+    const avatar = defineModel('avatar', {type: String});
 
     const props = defineProps({
         username:{type:String, required:true},
@@ -49,9 +50,8 @@
             
             console.log(response);
 
-            avatarBase64.value = await fileToBase64(response.data);
-            localStorage.setItem("user-avatar", avatarBase64.value);
-
+            avatar.value = await fileToBase64(response.data);
+            
             console.log("Аватар загружен успешно");
         } catch (error) {
             console.error('Ошибка загрузки аватарки:', error);
@@ -67,7 +67,7 @@
         @mouseleave="showCircles = false" 
         @click="openFileDialog"  
         class="avatar">
-            <img :src="avatarBase64" alt="Avatar" class="avatar-image" />
+            <img :src="avatar" alt="Avatar" class="avatar-image" />
             <div v-if="showCircles" class="spinning-circles" id="circles">
                 <div class="spinning-circle"></div>
                 <div class="spinning-circle"></div>
