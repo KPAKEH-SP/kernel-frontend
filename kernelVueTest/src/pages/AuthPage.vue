@@ -155,8 +155,8 @@
         <div class="circle"></div>
 
         <div id="main-panel" class="main-panel">
-            <PrimaryButton @click="openPanel('reg-panel')" text="create account" size=" -xl"/>
-            <PrimaryButton @click="openPanel('login-panel')" text="log in" size=" -xl"/>
+            <PrimaryButton @click="openPanel('reg-panel')" text="create account" size=" -xl" color=""/>
+            <PrimaryButton @click="openPanel('login-panel')" text="log in" size=" -xl" color=""/>
         </div>
 
         <div id="reg-panel" class="input-panel -hidden-panel" >
@@ -166,16 +166,16 @@
             <input v-model="regPassword" type="password" name="password" placeholder="password" autocomplete="off">
             <input v-model="regPasswordConfirm" type="password" placeholder="confirm password" autocomplete="off">
     
-            <PrimaryButton @click="register" text="register" size=""/>
-            <PrimaryButton @click="openPanel('main-panel')" text="back" size=""/>
+            <PrimaryButton @click="register" text="register" size="" color=""/>
+            <PrimaryButton @click="openPanel('main-panel')" text="back" size="" color=""/>
         </div>
 
         <div id="login-panel" class="input-panel -hidden-panel" autocomplete="off">
             <input v-model="loginUsername" type="text" placeholder="username" autocomplete="off">
             <input v-model="loginPassword" type="password" placeholder="password" autocomplete="off">
 
-            <PrimaryButton @click="login" text="log in" size=""/>
-            <PrimaryButton @click="openPanel('main-panel')" text="back" size=""/>
+            <PrimaryButton @click="login" text="log in" size="" color=""/>
+            <PrimaryButton @click="openPanel('main-panel')" text="back" size="" color=""/>
         </div>
     </div>
 </template>
