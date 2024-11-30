@@ -8,6 +8,7 @@
     import Modal from '@/components/ui/Modal.vue'
     import { router } from '@/router';
     import axios, { AxiosError } from 'axios';
+    import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     
     const storageToken = localStorage.getItem('token');
     const username = ref('');
@@ -17,7 +18,7 @@
     const newMessage = ref('');
     const stompClient = ref(null);
     const currentChatId = ref();
-    const userAvatar = ref(localStorage.getItem('user-avatar'));
+    const userAvatar = ref();
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
@@ -26,30 +27,6 @@
 
     let historySubscription = null;
     let chatSubscription = null;
-    
-    
-    const fileToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-            reader.readAsDataURL(file);
-        });
-    }
-
-
-    const getAvatar = async (user) => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/users/avatar/get/${user}`, {
-                responseType: 'blob'
-            });
-
-            const avatar = await fileToBase64(response.data);
-            return avatar;
-        } catch (error) {
-            console.error('Ошибка получения аватарки:', error);
-        }
-    }
 
     const updateChats = async (chatsResponse) => {
         chats.value = [];
@@ -60,7 +37,7 @@
 
                 for (const user of chat.users) {
                     if (user.username != username.value) {
-                        const avatar = await getAvatar(user.username);
+                        const avatar = getAvatar(user.username);
                         updatedChats.push({ chatAvatar: avatar, chatName: user.username, chatInfo: chat });
                     }
                 }
@@ -91,13 +68,13 @@
         }
     }
     
-    const updateFriends = async (friendsResponse) => {
+    const updateFriends = (friendsResponse) => {
         friends.value = [];
 
         let updatedFriends = [];
         
         for (const friend of friendsResponse) {
-            const avatar = await getAvatar(friend.user.username);
+            const avatar = getAvatar(friend.user.username);
             updatedFriends.push({friendAvatar: avatar, friendObj: friend});
         }
 
@@ -131,9 +108,7 @@
                     username.value = response.data.username;
                     getFriends();
                     getChats();
-                    getAvatar(username.value).then((avatar) => {
-                        userAvatar.value = avatar;
-                    });
+                    userAvatar.value = getAvatar(username.value, true);
                 });
             } else {
                 throw new Error("СУКА, ЕЩЁ РАЗ ПУСТОЙ ТОКЕН ОТПРАВИШЬ, РУКИ ОТОРВУ!");
@@ -230,20 +205,19 @@
                 const historyMessages = JSON.parse(message.body);
                 messages.value = [];
                 for(const message of historyMessages) {
-                    getAvatar(message.sender).then((avatar) => {
-                        const newMessage = {senderAvatar: avatar, data: message};
-                        messages.value.push(newMessage);
-                    });
+                    const avatar = getAvatar(message.sender);
+                    
+                    const newMessage = {senderAvatar: avatar, data: message};
+                    messages.value.push(newMessage);
                 }
                 console.log(messages);
             });
 
             chatSubscription = stompClient.value.subscribe(`/topic/chat/${chatId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
-                getAvatar(receivedMessage.sender).then((avatar) => {
-                        const newMessage = {senderAvatar: avatar, data: receivedMessage};
-                        messages.value.push(newMessage);
-                    });
+                const avatar = getAvatar(receivedMessage.sender)
+                const newMessage = {senderAvatar: avatar, data: receivedMessage};
+                messages.value.push(newMessage);
             });
 
             openedChatWindow.value = true;

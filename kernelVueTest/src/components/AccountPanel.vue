@@ -3,6 +3,7 @@
     import { router } from '@/router';
     import { ref } from 'vue';
     import axios from 'axios';
+    import { getAvatar } from '@/utils/users/avatars/GetAvatars';
 
     const showCircles = ref(false);
 
@@ -24,15 +25,6 @@
         fileInput.value.click();
     };
 
-    const fileToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-            reader.readAsDataURL(file);
-        });
-    }
-
     const uploadAvatar = async (event) => {
         const file = event.target.files[0];
         if (file == null || file == undefined) return;
@@ -50,7 +42,7 @@
             
             console.log(response);
 
-            avatar.value = await fileToBase64(response.data);
+            avatar.value = getAvatar(props.username, true);
             
             console.log("Аватар загружен успешно");
         } catch (error) {
