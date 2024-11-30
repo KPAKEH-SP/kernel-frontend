@@ -197,10 +197,15 @@
             friendUsername: friendUsername
         })
         .then(function (response) {
-            updateChats(response);
             console.log(response);
+            updateChats(response);
         })
         .catch(function (error) {
+            if (error.status == 409) {
+                connectToStompChat(error.response.data.message);
+                openedFriendsPanel.value = false;
+                openedChatsPanel.value = true;
+            }
             console.log(error);
         });
     }
@@ -323,7 +328,6 @@
         <div class="main-plane">
             <div v-if="openedChatsPanel" id="chats-panel" class="chats-panel">
                 <div class="chat" v-for="chat in chats">
-                    
                     <button class="chat-button" @click="connectToStompChat(chat.chatInfo.chatId)">
                         <div class="chat-avatar">
                             <img :src="chat.chatAvatar" class="avatar-image" />
@@ -355,7 +359,7 @@
                             </div>
                         </div>
                         <div class="message-control">
-                            <div class="delete-message">
+                            <div v-if="message.data.sender == username" class="delete-message">
                                 <PrimaryButton @click="deleteMessage(message.data.messageId)" text="del" size="" color="red"/>
                             </div>
                         </div>
