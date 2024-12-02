@@ -54,7 +54,8 @@
 <style>
     .list {
         display: flex;
-        flex-direction: row;
+        align-items: center;
+        justify-content: center;
         overflow-y: auto;
         border: 1px solid #ddd;
         border-radius: 2vh;
