@@ -18,6 +18,7 @@
     const newMessage = ref('');
     const stompClient = ref(null);
     const currentChatId = ref();
+    const currentChatName =ref();
     const userAvatar = ref();
 
     const openedAccountPanel = ref(false);
@@ -199,6 +200,7 @@
         stompClient.value = Webstomp.over(socket);
 
         currentChatId.value = chatId;
+        currentChatName.value = chats.value.find(chat => chat.chatInfo.chatId === chatId).chatName;
 
         stompClient.value.connect({}, () => {
             historySubscription = stompClient.value.subscribe(`/topic/chat/history/${chatId}`, (message) => {
@@ -314,7 +316,8 @@
             </div>
             <div v-if="openedChatWindow" class="chat-window">
                 <div class="chat-settings">
-                
+                    <div class="chat-name"> {{ currentChatName }}</div>
+                    <div class="call"></div>
                 </div>
                 <div class="messages">
                     <div v-for="(message, index) in messages" :key="index" class="message">
