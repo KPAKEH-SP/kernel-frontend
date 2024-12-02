@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import PrimaryButton from './ui/PrimaryButton.vue';
     import axios, { AxiosError } from 'axios';
+    import FriendCard from './ui/FriendCard.vue';
     
     const props = defineProps({
         username:{type:String, required:true}
@@ -28,31 +29,24 @@
 
     <div v-if="openedFriendsList" class="list">
         <div v-for="friend in friends" :key="friend.id">
-            <div v-if="friend.friendObj.status == 'ACCEPTED'" class="friend">
-                <div class="friend-avatar">
-                    <img :src="friend.friendAvatar" class="avatar-image" />
-                </div>
-                <div class="friend-name">{{ friend.friendObj.user.username }}</div>
+            <FriendCard v-if="friend.friendObj.status == 'ACCEPTED'" :username="friend.friendObj.user.username">
                 <PrimaryButton @click="emit('openChat', friend.friendObj.user.username)" text='chat' size="" color=""/>
-                <PrimaryButton @click="emit('removeFriend', friend.friendObj.user.username)" text="remove" size="" color="red"/>
-            </div>
+                <PrimaryButton @click="emit('removeFriend', friend.friendObj.user.username)" text="remove" size="" color="red"/>    
+            </FriendCard>
         </div>
     </div>
 
     <div v-if="openedRequestsList" class="list">
         <div v-for="friend in friends" :key="friend.id">
-            <div v-if="friend.friendObj.status == 'PENDING'" class="friend">
-                <div class="friend-avatar">
-                    <img :src="friend.friendAvatar" class="avatar-image" />
-                </div>
-                <div class="friend-name">{{ friend.friendObj.user.username }}</div>
+
+            <FriendCard v-if="friend.friendObj.status == 'PENDING'" :username="friend.friendObj.user.username">
                 <PrimaryButton v-if="friend.friendObj.pendingFrom.username != username" @click="emit('accept', friend.friendObj.user.username)" text='accept' size="" color=""/>
                 <div v-else>
                     sended
                 </div>
                 <PrimaryButton v-if="friend.friendObj.pendingFrom.username != username" @click="emit('removeFriend', friend.user.username)" text="dismiss" size="" color="red"/>
                 <PrimaryButton v-else @click="emit('removeFriend', friend.friendObj.user.username)" text="cancel" size="" color="red"/>
-            </div>
+            </FriendCard>
         </div>
     </div>
 </template>
@@ -60,11 +54,10 @@
 <style>
     .list {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         overflow-y: auto;
         border: 1px solid #ddd;
         border-radius: 2vh;
-        padding: 10px;
         box-sizing: border-box;
         scrollbar-width: none;
         flex-grow: 1;
