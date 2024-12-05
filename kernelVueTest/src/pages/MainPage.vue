@@ -126,8 +126,8 @@
         try {
             if (storageToken != null) {
                 await axios.post("http://localhost:8080/api/friends/remove", {
-                    friendUsername: friendUsername,
-                    userToken: storageToken
+                    token: storageToken,
+                    friendUsername: friendUsername
                 })
                 .then(function(response) {
                     updateFriends(response.data.body);
@@ -142,7 +142,7 @@
     const addFriend = (friendName) => {
         axios.post('http://localhost:8080/api/friends/add', {
             token: storageToken,
-            friendName: friendName
+            friendUsername: friendName
         })
         .then(function (response) {
             updateFriends(response.data.body);

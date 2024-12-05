@@ -74,7 +74,7 @@
   }
   
   .card-container:hover .card {
-    transform: scale(1.01);
+    transform: scale(1.03);
   }
   
   .card-container.flipped .card {
