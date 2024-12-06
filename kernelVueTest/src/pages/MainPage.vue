@@ -289,17 +289,20 @@
     <div class="main-container">
         <div class="servers-panel">
             <div class="servers-list">
-                <button @click="openedFriendsPanel = true">Frnds</button>
-                <button @click="openedChatsPanel = (!openedChatsPanel)">Chats</button>
+                <button class="server-button" @click="openedFriendsPanel = true">Frnds</button>
+                <button class="server-button" @click="openedChatsPanel = (!openedChatsPanel)">Chats</button>
             </div>
-            <button class="account-button" @click="openedAccountPanel = true">
+            <div class="account-button">
                 Acc
                 <img :src="userAvatar" alt="Avatar" class="avatar-image" />
 
                 <div class="status">
                     
                 </div>
-            </button>
+                <div class="account-menu">
+                    <PrimaryButton @click="openedAccountPanel = true" text="settings" size="s" color=""/>
+                </div>
+            </div>
         </div>
         <div class="main-plane">
             <div v-if="openedChatsPanel" id="chats-panel" class="chats-panel">
