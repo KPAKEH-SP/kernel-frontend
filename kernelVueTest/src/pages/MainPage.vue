@@ -56,7 +56,7 @@
     const getChats = async () => {
         try {
             if (storageToken != null) {
-                await axios.post("http://194.87.140.155:8080/api/chats/get", {
+                await axios.post("http://194.87.140.155:8080/tcp/api/chats/get", {
                     token: storageToken
                 })
                 .then(function(response) {
@@ -85,7 +85,7 @@
     const getFriends = async () => {
         try {
             if (storageToken != null) {
-                await axios.post("http://194.87.140.155:8080/api/friends/get", {
+                await axios.post("http://194.87.140.155:8080/tcp/api/friends/get", {
                     token: storageToken
                 })
                 .then(function(response) {
@@ -101,7 +101,7 @@
     const checkToken = async () => {
         try {
             if (storageToken != null) {   
-                await axios.post("http://194.87.140.155:8080/api/auth/user-info", {
+                await axios.post("http://194.87.140.155:8080/tcp/api/auth/user-info", {
                     token: storageToken
                 })
                 .then(function(response) {
@@ -125,7 +125,7 @@
     const removeFriend = async (friendUsername) => {
         try {
             if (storageToken != null) {
-                await axios.post("http://194.87.140.155:8080/api/friends/remove", {
+                await axios.post("http://194.87.140.155:8080/tcp/api/friends/remove", {
                     token: storageToken,
                     friendUsername: friendUsername
                 })
@@ -140,7 +140,7 @@
     }
 
     const addFriend = (friendName) => {
-        axios.post('http://194.87.140.155:8080/api/friends/add', {
+        axios.post('http://194.87.140.155:8080/tcp/api/friends/add', {
             token: storageToken,
             friendUsername: friendName
         })
@@ -154,7 +154,7 @@
     }
 
     const acceptFriend = (friendName) => {
-        axios.post('http://194.87.140.155:8080/api/friends/accept', {
+        axios.post('http://194.87.140.155:8080/tcp/api/friends/accept', {
             token: storageToken,
             friendUsername: friendName
         })
@@ -168,7 +168,7 @@
     }
 
     const chat = async (friendUsername) => {
-        axios.post('http://194.87.140.155:8080/api/chats/create', {
+        axios.post('http://194.87.140.155:8080/tcp/api/chats/create', {
             token: storageToken,
             friendUsername: friendUsername
         })
@@ -196,7 +196,7 @@
             chatSubscription = null;
         }
 
-        const socket = new SockJS('http://194.87.140.155:8080/ws');
+        const socket = new SockJS('http://194.87.140.155:8080/tcp/ws');
         stompClient.value = Webstomp.over(socket);
 
         currentChatId.value = chatId;
@@ -230,7 +230,7 @@
     };
 
     const connectToFriendsRequests = () => {
-        const socket = new SockJS('http://194.87.140.155:8080/ws');
+        const socket = new SockJS('http://194.87.140.155:8080/tcp/ws');
         stompClient.value = Webstomp.over(socket);
 
         stompClient.value.connect({}, () => {
@@ -260,7 +260,7 @@
     };
 
     const deleteMessage = (messageId) => {
-        axios.post('http://194.87.140.155:8080/api/chat/' + currentChatId.value +'/messages/delete/' + messageId)
+        axios.post('http://194.87.140.155:8080/tcp/api/chat/' + currentChatId.value +'/messages/delete/' + messageId)
         .then(function (response) {
             console.log(response);
         })

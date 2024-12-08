@@ -25,7 +25,7 @@
             openPanel('login-panel');
             return;
         }
-        axios.post("http://194.87.140.155:8080/api/auth/user-info", {
+        axios.post("http://194.87.140.155:8080/tcp/api/auth/user-info", {
             token: storageToken
         })
         .then(function(response) {
@@ -116,7 +116,7 @@
 
         regError.style.display = 'none';
 
-        axios.post('http://194.87.140.155:8080/api/auth/registration', {
+        axios.post('http://194.87.140.155:8080/tcp/api/auth/registration', {
             username: regUsername,
             email: regEmail,
             password: regPassword
@@ -133,7 +133,7 @@
     }
 
     const login = () => {
-        axios.post("http://194.87.140.155:8080/api/auth/login", {
+        axios.post("http://194.87.140.155:8080/tcp/api/auth/login", {
             username: loginUsername,
             password: loginPassword
         })
