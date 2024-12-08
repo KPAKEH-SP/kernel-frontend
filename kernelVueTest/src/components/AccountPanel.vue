@@ -33,7 +33,7 @@
         formData.append('file', file);
 
         try {
-            const response = await axios.post('http://194.87.140.155:8080/tcp/api/users/avatar/upload/' + props.token, formData, {
+            const response = await axios.post('http://194.87.140.155:8080/api/users/avatar/upload/' + props.token, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
