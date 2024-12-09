@@ -22,7 +22,7 @@
             openedLoginPanel.value = true;
             return;
         }
-        axios.post("/api/api/auth/user-info", {
+        axios.post("/api/auth/user-info", {
             token: storageToken
         })
         .then(function(response) {
@@ -110,7 +110,7 @@
 
         regErrorShowed.value = false;
 
-        axios.post('/api/api/auth/registration', {
+        axios.post('/api/auth/registration', {
             username: regUsername.value,
             email: regEmail.value,
             password: regPassword.value
@@ -126,7 +126,7 @@
     }
 
     const login = () => {
-        axios.post("/api/api/auth/login", {
+        axios.post("/api/auth/login", {
             username: loginUsername.value,
             password: loginPassword.value
         })
