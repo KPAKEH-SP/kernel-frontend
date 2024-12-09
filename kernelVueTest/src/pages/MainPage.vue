@@ -112,7 +112,7 @@
                     userAvatar.value = getAvatar(username.value, true);
                 });
             } else {
-                throw new Error("СУКА, ЕЩЁ РАЗ ПУСТОЙ ТОКЕН ОТПРАВИШЬ, РУКИ ОТОРВУ!");
+                throw new Error("token is empty");
             }
         } catch (error) {
              console.log('Redirect to: /auth');
