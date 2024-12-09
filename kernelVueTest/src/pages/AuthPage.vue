@@ -22,7 +22,7 @@
             openedLoginPanel.value = true;
             return;
         }
-        axios.post("http://194.87.140.155:8080/api/auth/user-info", {
+        axios.post("https://194.87.140.155:8080/api/auth/user-info", {
             token: storageToken
         })
         .then(function(response) {
@@ -99,8 +99,6 @@
 
         //--- email validation ---
         
-        //TODO: переделать валидацию
-
         var re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         if (re.test(String(regEmail.value).toLowerCase()) == false) {
