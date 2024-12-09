@@ -121,7 +121,6 @@
         })
         .catch(function (serverError) {
             console.log(serverError.response.data.message);
-            regError.style.display = 'flex';
             error.value = serverError.response.data.message;
         });
     }
