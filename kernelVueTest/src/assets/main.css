@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 
-/*
---- sphere ---
-*/
   .circles {
     height: 55vmin;
     width: 55vmin;
@@ -134,18 +131,10 @@
   align-items: center;
 }
 
-/*
---- links ---
-*/
-
 body {
   background: black;
   color: #fff;
 }
-
-/* 
---- input panel ---
-*/
 
 .input-panel {
   display: flex;
@@ -194,10 +183,6 @@ body {
   color: #00ffff;
 }
 
-/*
---- hiden elements ---
-*/
-
 .hidden {
   display: none;
   font-size: clamp(12px, 2vw, 2vh);
@@ -210,7 +195,7 @@ body {
   font-style: normal;
 }
 
-.hidden.-error {
+.error {
   color: #ff4343;
   max-width: 15vw;
   text-align: center;
@@ -222,13 +207,9 @@ body {
     text-shadow: #ff4343 0 0 6px;
   }
   50% {
-    text-shadow: #ff4343 0 0 16px; /* Увеличение интенсивности тени */
+    text-shadow: #ff4343 0 0 16px;
   }
 }
-
-/*
---- main container ---
-*/
 
 .main-container {
   display: flex;
@@ -236,17 +217,13 @@ body {
   height: 100vh;
 }
 
-/*
---- servers panel ---
-*/
-
 .servers-panel {
   width: 5%;
   height: 100%;
   border-right: 3px solid #fff;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Центрирование по горизонтали */
+  align-items: center;
 }
 
 .servers-list {
@@ -294,7 +271,7 @@ body {
 }
 
 .account-button {
-  position: relative; /* Относительное позиционирование для родителя */
+  position: relative;
   padding: 10px;
   display: flex;
   z-index: 998;
@@ -320,9 +297,9 @@ body {
   width: 10px;
   background-color: #43ff43;
   border-radius: 50%;
-  position: absolute; /* Абсолютное позиционирование */
-  bottom: 1px; /* Отступ от нижнего края кнопки */
-  right: 1px; /* Отступ от правого края кнопки */
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
 }
 
 .account-menu {
@@ -341,9 +318,6 @@ body {
   align-items: center;
   justify-content: end;
 }
-/*
---- main plane ---
-*/
 
 .main-plane {
   display: flex;
@@ -406,10 +380,6 @@ body {
   width: 100%;
   flex-direction: column;
 }
-
-/*
---- panel above ---
-*/
 
 .message-input {
   font-family: "Roboto Mono", monospace;
