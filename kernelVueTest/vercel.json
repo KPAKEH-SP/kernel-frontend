@@ -7,6 +7,10 @@
       {
         "source": "/ws/:path*",
         "destination": "http://194.87.140.155:8080/ws/:path*"
-      }
+      },
+      {
+        "source": "/(.*)", 
+        "destination": "/"
+    }
     ]
   }
