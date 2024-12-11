@@ -3,7 +3,8 @@
     import axios, { AxiosError } from 'axios';
     import { ref } from 'vue';
     import PrimaryButton from '@/components/ui/PrimaryButton.vue';
-import { PhCaretUp, PhPassword, PhSignIn, PhUserPlus } from '@phosphor-icons/vue';
+    import { PhCaretUp, PhPassword, PhSignIn, PhUserPlus } from '@phosphor-icons/vue';
+    import FormSwitcherArrow from '@/components/ui/FormSwitcher.vue';
 
     const error = ref('');
     const regUsername = ref('');
@@ -13,8 +14,7 @@ import { PhCaretUp, PhPassword, PhSignIn, PhUserPlus } from '@phosphor-icons/vue
     const loginUsername = ref('');
     const loginPassword = ref('');
 
-    const openedRegPanel = ref(true);
-    const openedLoginPanel = ref(false);
+    const activeSlot = ref('top');
     const regErrorShowed = ref(false);
 
     const userInfo = () => {
@@ -33,8 +33,7 @@ import { PhCaretUp, PhPassword, PhSignIn, PhUserPlus } from '@phosphor-icons/vue
         .catch((error) => {
             if (error instanceof AxiosError) {
                 if (error.response.status == 401 && error.response.data.message == "Expired token") {
-                    openedLoginPanel.value = true;
-                    openedRegPanel.value = false;
+                    activeSlot.value = 'bottom'
                 }
             }
         });
@@ -147,35 +146,39 @@ import { PhCaretUp, PhPassword, PhSignIn, PhUserPlus } from '@phosphor-icons/vue
         <div class="circle"></div>
         <div class="circle"></div>
         <div class="circle"></div>
+        <FormSwitcherArrow v-model:activeform = "activeSlot" class="arrow-container">
+            <template #icon-top>
+                <PhUserPlus :size="40"/>
+            </template>
+            <template #content-top>
+                <div class="input-panel" >
+                    <div v-if="regErrorShowed" class="error">{{error}}</div>
+                    <input v-model="regUsername" type="text" name="username" placeholder="username" autocomplete="off">
+                    <input v-model="regEmail" type="email" name="email" placeholder="email" autocomplete="off">
+                    <form>
+                        <input v-model="regPassword" type="password" name="password" placeholder="password" autocomplete="off">
+                    </form>
+                    <form>
+                        <input v-model="regPasswordConfirm" type="password" placeholder="confirm password" autocomplete="off">
+                    </form>
+            
+                    <PrimaryButton @click="register" text="register" size="" color=""/>
+                </div>
+            </template>
 
-            <PhSignIn @click="openedLoginPanel = true, openedRegPanel = false" 
-            :class="{'sign-in': !openedLoginPanel, 'sign-in-selected': openedLoginPanel}" 
-            :size="40"/>
-            <PhUserPlus @click="openedRegPanel = true, openedLoginPanel = false" 
-            :class="{'create-account': !openedRegPanel, 'create-account-selected': openedRegPanel}" 
-            :size="40"/>
+            <template #icon-bottom>
+                <PhSignIn :size="40"/>
+            </template>
+            <template #content-bottom>
+                <div class="input-panel">
+                    <input v-model="loginUsername" type="text" placeholder="username" autocomplete="off">
+                    <form>
+                        <input v-model="loginPassword" type="password" placeholder="password" autocomplete="off">
+                    </form>
 
-        <div v-if="openedRegPanel" class="input-panel" >
-            <div v-if="regErrorShowed" class="error">{{error}}</div>
-            <input v-model="regUsername" type="text" name="username" placeholder="username" autocomplete="off">
-            <input v-model="regEmail" type="email" name="email" placeholder="email" autocomplete="off">
-            <form>
-                <input v-model="regPassword" type="password" name="password" placeholder="password" autocomplete="off">
-            </form>
-            <form>
-                <input v-model="regPasswordConfirm" type="password" placeholder="confirm password" autocomplete="off">
-            </form>
-    
-            <PrimaryButton @click="register" text="register" size="" color=""/>
-        </div>
-
-        <div v-if="openedLoginPanel" class="input-panel">
-            <input v-model="loginUsername" type="text" placeholder="username" autocomplete="off">
-            <form>
-                <input v-model="loginPassword" type="password" placeholder="password" autocomplete="off">
-            </form>
-
-            <PrimaryButton @click="login" text="log in" size="" color=""/>
-        </div>
+                    <PrimaryButton @click="login" text="log in" size="" color=""/>
+                </div>
+            </template>
+        </FormSwitcherArrow>
     </div>
 </template>
