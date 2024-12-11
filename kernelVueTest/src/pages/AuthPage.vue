@@ -3,6 +3,7 @@
     import axios, { AxiosError } from 'axios';
     import { ref } from 'vue';
     import PrimaryButton from '@/components/ui/PrimaryButton.vue';
+import { PhCaretUp, PhPassword, PhSignIn, PhUserPlus } from '@phosphor-icons/vue';
 
     const error = ref('');
     const regUsername = ref('');
@@ -12,14 +13,13 @@
     const loginUsername = ref('');
     const loginPassword = ref('');
 
-    const openedRegPanel = ref(false);
+    const openedRegPanel = ref(true);
     const openedLoginPanel = ref(false);
     const regErrorShowed = ref(false);
 
     const userInfo = () => {
         var storageToken = localStorage.getItem('token');
         if (storageToken == null) {
-            openedLoginPanel.value = true;
             return;
         }
         axios.post("/api/auth/user-info", {
@@ -34,6 +34,7 @@
             if (error instanceof AxiosError) {
                 if (error.response.status == 401 && error.response.data.message == "Expired token") {
                     openedLoginPanel.value = true;
+                    openedRegPanel.value = false;
                 }
             }
         });
@@ -147,10 +148,12 @@
         <div class="circle"></div>
         <div class="circle"></div>
 
-        <div v-if="!openedLoginPanel && !openedRegPanel" id="main-panel" class="main-panel">
-            <PrimaryButton @click="openedRegPanel = true" text="create account" size=" -xl" color=""/>
-            <PrimaryButton @click="openedLoginPanel = true" text="log in" size=" -xl" color=""/>
-        </div>
+            <PhSignIn @click="openedLoginPanel = true, openedRegPanel = false" 
+            :class="{'sign-in': !openedLoginPanel, 'sign-in-selected': openedLoginPanel}" 
+            :size="40"/>
+            <PhUserPlus @click="openedRegPanel = true, openedLoginPanel = false" 
+            :class="{'create-account': !openedRegPanel, 'create-account-selected': openedRegPanel}" 
+            :size="40"/>
 
         <div v-if="openedRegPanel" class="input-panel" >
             <div v-if="regErrorShowed" class="error">{{error}}</div>
@@ -164,7 +167,6 @@
             </form>
     
             <PrimaryButton @click="register" text="register" size="" color=""/>
-            <PrimaryButton @click="openedRegPanel = false" text="back" size="" color=""/>
         </div>
 
         <div v-if="openedLoginPanel" class="input-panel">
@@ -174,7 +176,6 @@
             </form>
 
             <PrimaryButton @click="login" text="log in" size="" color=""/>
-            <PrimaryButton @click="openedLoginPanel = false" text="back" size="" color=""/>
         </div>
     </div>
 </template>

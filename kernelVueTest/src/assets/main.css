@@ -500,3 +500,30 @@ body {
   align-items: center;
 }
 
+.sign-in {
+  position: absolute;
+  bottom: 80%;
+  transition: all 0.5s ease;
+}
+
+.sign-in:hover, .sign-in-selected {
+  color: #00ffff;
+  cursor: pointer;
+  position: absolute;
+  bottom: 80%;
+  filter: drop-shadow(0 0 10px #00ffff);
+}
+
+.create-account {
+  position: absolute;
+  top: 80%;
+  transition: all 0.5s ease;
+}
+
+.create-account:hover, .create-account-selected {
+  position: absolute;
+  top: 80%;
+  color: #00ffff;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px #00ffff);
+}
