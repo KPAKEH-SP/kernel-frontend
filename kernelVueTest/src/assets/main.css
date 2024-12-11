@@ -502,7 +502,7 @@ body {
 
 .sign-in {
   position: absolute;
-  bottom: 80%;
+  top: 80%;
   transition: all 0.5s ease;
 }
 
@@ -510,20 +510,31 @@ body {
   color: #00ffff;
   cursor: pointer;
   position: absolute;
-  bottom: 80%;
+  top: 80%;
   filter: drop-shadow(0 0 10px #00ffff);
 }
 
 .create-account {
   position: absolute;
-  top: 80%;
+  bottom: 80%;
   transition: all 0.5s ease;
 }
 
 .create-account:hover, .create-account-selected {
   position: absolute;
-  top: 80%;
+  bottom: 80%;
   color: #00ffff;
   cursor: pointer;
   filter: drop-shadow(0 0 10px #00ffff);
+}
+
+.active {
+  color: #00ffff;
+  filter: drop-shadow(0 0 10px #00ffff);
+}
+
+.arrow-container {
+  height: 80%;
+  width: 80%;
+  position: absolute;
 }
