@@ -160,7 +160,7 @@
                     <input v-model="regUsername" type="text" name="username" placeholder="username" autocomplete="off">
                     <input v-model="regEmail" type="email" name="email" placeholder="email" autocomplete="off">
                     <PasswordInput v-model:passwordValue="regPassword"/>
-                    <PasswordInput v-model:passwordValue="regPasswordConfirm"/>
+                    <PasswordInput :placeholder="'confirm password'" v-model:passwordValue="regPasswordConfirm"/>
             
                     <PrimaryButton @click="register" text="register" size="" color=""/>
                 </div>

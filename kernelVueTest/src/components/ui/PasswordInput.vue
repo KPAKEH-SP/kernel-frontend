@@ -5,7 +5,7 @@
     const showPassword = ref(false);
 
     const model = defineModel('passwordValue', {default:''});
-
+    const props = defineProps({placeholder:{type:String, default:'password'}});
 </script>
 
 <template>
@@ -15,7 +15,7 @@
                 v-model="model"
                 :type="showPassword ? 'text' : 'password'"
                 name="password"
-                placeholder="password"
+                :placeholder="props.placeholder"
                 autocomplete="off"
             />
             <PhFlashlight
