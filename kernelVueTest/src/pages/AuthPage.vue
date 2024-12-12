@@ -3,8 +3,9 @@
     import axios, { AxiosError } from 'axios';
     import { ref } from 'vue';
     import PrimaryButton from '@/components/ui/PrimaryButton.vue';
-    import { PhCaretUp, PhPassword, PhSignIn, PhUserPlus } from '@phosphor-icons/vue';
+    import { PhFlashlight, PhSignIn, PhUserPlus } from '@phosphor-icons/vue';
     import FormSwitcherArrow from '@/components/ui/FormSwitcher.vue';
+    import PasswordInput from '@/components/ui/PasswordInput.vue';
 
     const error = ref('');
     const regUsername = ref('');
@@ -13,6 +14,9 @@
     const regPasswordConfirm = ref('');
     const loginUsername = ref('');
     const loginPassword = ref('');
+    const regShowPassword = ref(false);
+    const regShowConfirmPassword = ref(false);
+    const loginShowPassword = ref(false);
 
     const activeSlot = ref('top');
     const regErrorShowed = ref(false);
@@ -155,12 +159,8 @@
                     <div v-if="regErrorShowed" class="error">{{error}}</div>
                     <input v-model="regUsername" type="text" name="username" placeholder="username" autocomplete="off">
                     <input v-model="regEmail" type="email" name="email" placeholder="email" autocomplete="off">
-                    <form>
-                        <input v-model="regPassword" type="password" name="password" placeholder="password" autocomplete="off">
-                    </form>
-                    <form>
-                        <input v-model="regPasswordConfirm" type="password" placeholder="confirm password" autocomplete="off">
-                    </form>
+                    <PasswordInput v-model:passwordValue="regPassword"/>
+                    <PasswordInput v-model:passwordValue="regPasswordConfirm"/>
             
                     <PrimaryButton @click="register" text="register" size="" color=""/>
                 </div>
@@ -172,9 +172,7 @@
             <template #content-bottom>
                 <div class="input-panel">
                     <input v-model="loginUsername" type="text" placeholder="username" autocomplete="off">
-                    <form>
-                        <input v-model="loginPassword" type="password" placeholder="password" autocomplete="off">
-                    </form>
+                    <PasswordInput v-model:passwordValue="loginPassword"/>
 
                     <PrimaryButton @click="login" text="log in" size="" color=""/>
                 </div>
