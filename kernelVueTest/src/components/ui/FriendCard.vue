@@ -34,7 +34,7 @@
     <div class="card">
       <div class="card-front">
         <div class="avatar">
-          <img :src="getAvatar(props.username)" alt="Avatar" class="avatar-image" />
+          <img :src="getAvatar(props.username)" class="avatar-image" onerror="this.style.display='none';"/>
           <div v-if="showCircles" class="spinning-circles" id="circles">
               <div class="spinning-circle"></div>
               <div class="spinning-circle"></div>
