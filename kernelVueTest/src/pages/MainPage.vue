@@ -221,7 +221,7 @@
                 const newMessage = {senderAvatar: avatar, data: receivedMessage};
                 messages.value.push(newMessage);
             });
-
+            
             openedChatWindow.value = true;
             stompClient.value.send(`/kernel/chat/history/${chatId}`, {}, {});
         }, (error) => {
@@ -293,8 +293,7 @@
                 <button class="server-button" @click="openedChatsPanel = (!openedChatsPanel)">Chats</button>
             </div>
             <div class="account-button">
-                Acc
-                <img :src="userAvatar" alt="Avatar" class="avatar-image" />
+                <img :src="userAvatar" class="avatar-image" onerror="this.style.display='none';"/>
 
                 <div class="status">
                     
@@ -309,7 +308,7 @@
                 <div class="chat" v-for="chat in chats">
                     <button class="chat-button" @click="connectToStompChat(chat.chatInfo.chatId)">
                         <div class="chat-avatar">
-                            <img :src="chat.chatAvatar" class="avatar-image" />
+                            <img :src="chat.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
                         </div> 
                         <div class="chat-name">
                             {{ chat.chatName }}
@@ -325,7 +324,7 @@
                 <div class="messages">
                     <div v-for="(message, index) in messages" :key="index" class="message">
                         <div class="user-avatar">
-                            <img :src="message.senderAvatar" class="avatar-image" />
+                            <img :src="message.senderAvatar" class="avatar-image" onerror="this.style.display='none';"/>
                         </div>
                         <div class="message-info">
                             <div class="author-info">
