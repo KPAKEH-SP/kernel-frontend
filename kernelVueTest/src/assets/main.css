@@ -262,7 +262,7 @@ body {
   color: #00ffff;
 }
 
-.servers-panel .account-button:hover .account-menu{
+.account-button:hover .account-menu{
   box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
   border-color: #00ffff;
   color: #00ffff;
@@ -272,22 +272,55 @@ body {
 
 .account-button {
   position: relative;
-  padding: 10px;
   display: flex;
-  z-index: 998;
   width: 50px;
   height: 50px;
   background: #000;
   border: 2px solid #ffffff;
   border-radius: 50%;
   color: #ffffff;
-  cursor: pointer;
   align-items: center;
   justify-content: center;
   margin-top: 5px;
   margin-bottom: 5px;
   transition: all 0.5s ease;
   box-sizing: border-box;
+}
+
+.account-settings, .account-notifications {
+  color: #fff;
+  transition: all 0.5s ease;
+  margin-right: 5px;
+}
+
+.account-notifications {
+  position: relative;
+  display: flex;
+}
+
+.account-settings:hover, .account-notifications:hover {
+  color: #00ffff;
+  filter: drop-shadow(0 0 5px #00ffff);
+  cursor: pointer;
+}
+
+.notifications-menu {
+  position: absolute;
+  background: transparent;
+  width: 0%;
+  height: 0px;
+  bottom: 120%;
+  border: 2px solid transparent;
+  border-radius: 1vh 1vh 1vh 1vh;
+  transition: all 0.5s ease;
+}
+
+.account-notifications:hover + .notifications-menu {
+  width: 100%;
+  height: 200px;
+  background-color: #000;
+  border-color: #00ffff;
+  box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
 }
 
 .status {
@@ -297,7 +330,8 @@ body {
   border-radius: 50%;
   position: absolute;
   bottom: 1px;
-  right: 1px;
+  z-index: 11;
+  left: 1px;
 }
 
 .account-menu {
@@ -305,16 +339,21 @@ body {
   position: absolute;
   background-color: #000;
   border: 2px solid #fff;
-  border-left: transparent;
   border-radius: 0vh 1vh 1vh 0vh;
   transition: all 0.5s ease;
-  overflow: hidden;
-  z-index:-99;
   left: 50%;
   height: 100%;
   width: 0px;
   align-items: center;
   justify-content: end;
+}
+
+.avatar-wrapper {
+  background: #000;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  border-radius: 50%;
 }
 
 .main-plane {

@@ -9,6 +9,7 @@
     import { router } from '@/router';
     import axios, { AxiosError } from 'axios';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
+    import { PhBell, PhGear } from '@phosphor-icons/vue';
     
     const storageToken = localStorage.getItem('token');
     const username = ref('');
@@ -293,13 +294,20 @@
                 <button class="server-button" @click="openedChatsPanel = (!openedChatsPanel)">Chats</button>
             </div>
             <div class="account-button">
-                <img :src="userAvatar" class="avatar-image" onerror="this.style.display='none';"/>
+                <div class="avatar-wrapper">
+                    <img :src="userAvatar" class="avatar-image" onerror="this.style.display='none';"/>
+                </div>
 
                 <div class="status">
                     
                 </div>
                 <div class="account-menu">
-                    <PrimaryButton @click="openedAccountPanel = true" text="settings" size="s" color=""/>
+                    <PhBell class="account-notifications":size="30"/>
+                    <div class="notifications-menu">
+                        
+                    </div>
+                    <PhGear class="account-settings" @click="openedAccountPanel = true" :size="30"/>
+                    <!--PrimaryButton @click="openedAccountPanel = true" text="settings" size="s" color=""/-->
                 </div>
             </div>
         </div>
