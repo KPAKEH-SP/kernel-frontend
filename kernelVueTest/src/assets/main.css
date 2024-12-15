@@ -268,6 +268,7 @@ body {
   color: #00ffff;
   width: 100px;
   padding-left: 50%;
+  overflow: visible;
 }
 
 .account-button {
@@ -293,9 +294,10 @@ body {
   margin-right: 5px;
 }
 
-.account-notifications {
+.account-notifications-wrapper {
   position: relative;
   display: flex;
+  justify-content: center;
 }
 
 .account-settings:hover, .account-notifications:hover {
@@ -309,15 +311,16 @@ body {
   background: transparent;
   width: 0%;
   height: 0px;
-  bottom: 120%;
+  bottom: 0%;
   border: 2px solid transparent;
   border-radius: 1vh 1vh 1vh 1vh;
   transition: all 0.5s ease;
 }
 
-.account-notifications:hover + .notifications-menu {
-  width: 100%;
+.account-notifications-wrapper:hover .notifications-menu {
   height: 200px;
+  width: 300%;
+  bottom: 100%;
   background-color: #000;
   border-color: #00ffff;
   box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
@@ -346,6 +349,7 @@ body {
   width: 0px;
   align-items: center;
   justify-content: end;
+  overflow: hidden;
 }
 
 .avatar-wrapper {
