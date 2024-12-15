@@ -302,9 +302,11 @@
                     
                 </div>
                 <div class="account-menu">
-                    <PhBell class="account-notifications":size="30"/>
-                    <div class="notifications-menu">
-                        
+                    <div class="account-notifications-wrapper">
+                        <PhBell class="account-notifications":size="30"/>
+                        <div class="notifications-menu">
+                            
+                        </div>
                     </div>
                     <PhGear class="account-settings" @click="openedAccountPanel = true" :size="30"/>
                     <!--PrimaryButton @click="openedAccountPanel = true" text="settings" size="s" color=""/-->
