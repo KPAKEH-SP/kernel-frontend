@@ -21,6 +21,7 @@
     const currentChatId = ref();
     const currentChatName =ref();
     const userAvatar = ref();
+    const notifications = ref();
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
@@ -98,6 +99,21 @@
              console.log(error);
         }
     }
+
+    const getNotifications = async () => {
+        try {
+            axios({
+                method:'get',
+                url:'/api/notifications/get',
+                headers: {'X-Token': storageToken},
+            }).then(function(response) {
+                notifications.value = response.data;
+                console.log("NOTIFICATIONS >>> ", notifications);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
     
     const checkToken = async () => {
         try {
@@ -110,6 +126,7 @@
                     username.value = response.data.username;
                     getFriends();
                     getChats();
+                    getNotifications();
                     userAvatar.value = getAvatar(username.value, true);
                 });
             } else {
@@ -230,7 +247,7 @@
         });
     };
 
-    const connectToFriendsRequests = () => {
+    const connectToWebSocket = () => {
         const socket = new SockJS('/ws');
         stompClient.value = Webstomp.over(socket);
 
@@ -240,12 +257,21 @@
                 getFriends();
                 console.log(message);
             });
+
+            console.log(stompClient.value);
+
+            stompClient.value.subscribe(`topic/notifications/${username.value}`, (message) => {
+                getNotifications();
+                console.log(message);
+            });
+
+            console.log(stompClient.value);
         });
 
         return stompClient;
     }
 
-    connectToFriendsRequests();
+    connectToWebSocket();
 
     const sendMessage = () => {
         if (newMessage.value.trim() && stompClient.value && stompClient.value.connected) {
