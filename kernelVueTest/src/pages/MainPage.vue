@@ -260,9 +260,12 @@
 
             console.log(stompClient.value);
 
-            stompClient.value.subscribe(`topic/notifications/${username.value}`, (message) => {
+            stompClient.value.subscribe(`/topic/notifications/${username.value}`, (message) => {
                 getNotifications();
                 console.log(message);
+
+                const text = message.body;
+                const notification = new Notification("Kernel", { body: text });
             });
 
             console.log(stompClient.value);
