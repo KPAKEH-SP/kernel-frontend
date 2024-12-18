@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@phosphor-icons/vue": "^2.2.1",
+    "@vueuse/core": "^12.0.0",
     "axios": "^1.7.7",
     "kernelvuetest": "file:",
     "sockjs-client": "^1.6.1",

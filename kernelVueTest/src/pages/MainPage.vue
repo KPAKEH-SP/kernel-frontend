@@ -10,6 +10,7 @@
     import axios, { AxiosError } from 'axios';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { PhBell, PhGear } from '@phosphor-icons/vue';
+    import { useApi } from '@/composables/useApi';
     
     const storageToken = localStorage.getItem('token');
     const username = ref('');
@@ -21,7 +22,7 @@
     const currentChatId = ref();
     const currentChatName =ref();
     const userAvatar = ref();
-    const notifications = ref();
+    const notifications = ref([]);
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
@@ -114,16 +115,16 @@
             console.log(error);
         }
     }
-    
+    const getUserApi = useApi({url: "/api/auth/user-info", method: "get"});
+    console.log(getUserApi);
+
     const checkToken = async () => {
         try {
             if (storageToken != null) {   
-                await axios.post("/api/auth/user-info", {
-                    token: storageToken
-                })
+                await getUserApi.execute()
                 .then(function(response) {
                     console.log(response);
-                    username.value = response.data.username;
+                    username.value = response.username;
                     getFriends();
                     getChats();
                     getNotifications();
@@ -133,8 +134,9 @@
                 throw new Error("token is empty");
             }
         } catch (error) {
-             console.log('Redirect to: /auth');
-             router.push({path: '/auth'});
+            console.log(error);
+            console.log('Redirect to: /auth');
+            router.push({path: '/auth'});
         }
     }
 
