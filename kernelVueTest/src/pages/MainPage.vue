@@ -7,9 +7,9 @@
     import FriendsPanel from '@/components/FriendsPanel.vue';
     import Modal from '@/components/ui/Modal.vue'
     import { router } from '@/router';
-    import axios, { AxiosError } from 'axios';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { PhBell, PhGear } from '@phosphor-icons/vue';
+    import { useApi } from '@/composables/useApi';
     
     const storageToken = localStorage.getItem('token');
     const username = ref('');
@@ -21,7 +21,7 @@
     const currentChatId = ref();
     const currentChatName =ref();
     const userAvatar = ref();
-    const notifications = ref();
+    const notifications = ref([]);
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
@@ -34,7 +34,7 @@
     const updateChats = async (chatsResponse) => {
         chats.value = [];
 
-        for (const chat of chatsResponse.data) {
+        for (const chat of chatsResponse) {
             if (chat.users.length == 2) {
                 let updatedChats = [];
 
@@ -55,12 +55,12 @@
         console.log(chats);
     };
 
+    const getChatsApi = useApi({url: "/api/chats/get", method: "get"});
+
     const getChats = async () => {
         try {
             if (storageToken != null) {
-                await axios.post("/api/chats/get", {
-                    token: storageToken
-                })
+                getChatsApi.execute()
                 .then(function(response) {
                     updateChats(response);
                     console.log(chats);
@@ -72,6 +72,8 @@
     }
     
     const updateFriends = (friendsResponse) => {
+        console.log("FRIENDS RESPONSE >>> ", friendsResponse);
+
         friends.value = [];
 
         let updatedFriends = [];
@@ -84,14 +86,14 @@
         friends.value = updatedFriends;
     }
 
+    const getFrindsApi = useApi({url: "api/friends/get", method: "get"});
+
     const getFriends = async () => {
         try {
             if (storageToken != null) {
-                await axios.post("/api/friends/get", {
-                    token: storageToken
-                })
+                getFrindsApi.execute()
                 .then(function(response) {
-                    updateFriends(response.data);
+                    updateFriends(response);
                     console.log(friends);
                 });
             }
@@ -99,15 +101,14 @@
              console.log(error);
         }
     }
+    
+    const getNotificationsApi = useApi({url: "/api/notifications/get", method: "get"});
 
     const getNotifications = async () => {
         try {
-            axios({
-                method:'get',
-                url:'/api/notifications/get',
-                headers: {'X-Token': storageToken},
-            }).then(function(response) {
-                notifications.value = response.data;
+            getNotificationsApi.execute()
+            .then(function(response) {
+                notifications.value = response;
                 console.log("NOTIFICATIONS >>> ", notifications);
             });
         } catch (error) {
@@ -115,15 +116,15 @@
         }
     }
     
+    const getUserApi = useApi({url: "/api/auth/user-info", method: "get"});
+
     const checkToken = async () => {
         try {
             if (storageToken != null) {   
-                await axios.post("/api/auth/user-info", {
-                    token: storageToken
-                })
+                await getUserApi.execute()
                 .then(function(response) {
                     console.log(response);
-                    username.value = response.data.username;
+                    username.value = response.username;
                     getFriends();
                     getChats();
                     getNotifications();
@@ -133,37 +134,37 @@
                 throw new Error("token is empty");
             }
         } catch (error) {
-             console.log('Redirect to: /auth');
-             router.push({path: '/auth'});
+            console.log(error);
+            console.log('Redirect to: /auth');
+            router.push({path: '/auth'});
         }
     }
 
     checkToken();
 
+    const removeFriendApi = useApi({url: "/api/friends/remove", method: "post"});
+
     const removeFriend = async (friendUsername) => {
         try {
             if (storageToken != null) {
-                await axios.post("/api/friends/remove", {
-                    token: storageToken,
-                    friendUsername: friendUsername
-                })
+                console.log(friendUsername);
+                removeFriendApi.execute(2000, {data: {username: friendUsername}})
                 .then(function(response) {
-                    updateFriends(response.data.body);
-                    console.log(friends);
+                    console.log(response);
+                    updateFriends(response);
                 });
             }
         } catch (error) {
              console.log(error);
         }
     }
+    
+    const addFriendApi = useApi({url: "/api/friends/add", method: "post"});
 
-    const addFriend = (friendName) => {
-        axios.post('/api/friends/add', {
-            token: storageToken,
-            friendUsername: friendName
-        })
+    const addFriend = (friendUsername) => {
+        addFriendApi.execute(2000, {data: {username: friendUsername}})
         .then(function (response) {
-            updateFriends(response.data.body);
+            updateFriends(response);
             console.log(response);
         })
         .catch(function (error) {
@@ -171,25 +172,24 @@
         });
     }
 
-    const acceptFriend = (friendName) => {
-        axios.post('/api/friends/accept', {
-            token: storageToken,
-            friendUsername: friendName
-        })
+    const acceptFriendApi = useApi({url: "/api/friends/accept", method: "post"});
+
+    const acceptFriend = (friendUsername) => {
+        acceptFriendApi.execute(2000, {data: {username: friendUsername}})
         .then(function (response) {
-            updateFriends(response.data.body);
+            updateFriends(response);
             console.log(response);
         })
         .catch(function (error) {
             console.log(error);
         });
     }
+
+    const chatApi = useApi({url: "/api/chats/create", method: "post"});
+
 
     const chat = async (friendUsername) => {
-        axios.post('/api/chats/create', {
-            token: storageToken,
-            friendUsername: friendUsername
-        })
+        chatApi.execute(2000, {data: {username: friendUsername}})
         .then(function (response) {
             console.log(response);
             updateChats(response);
@@ -288,12 +288,11 @@
             newMessage.value = '';
         }
     };
+    
+    const deleteMessageApi = useApi({url: "api/messages/delete", method: "post"})
 
     const deleteMessage = (messageId) => {
-        axios.post('/api/chat/' + currentChatId.value +'/messages/delete/' + messageId)
-        .then(function (response) {
-            console.log(response);
-        })
+        deleteMessageApi.execute(2000, {data: {chatId: currentChatId.value, messageId: messageId}})
         .catch(function (error) {
             console.log(error);
         });

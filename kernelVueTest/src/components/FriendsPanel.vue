@@ -1,7 +1,6 @@
 <script setup>
     import { ref } from 'vue';
     import PrimaryButton from './ui/PrimaryButton.vue';
-    import axios, { AxiosError } from 'axios';
     import FriendCard from './ui/FriendCard.vue';
     
     const props = defineProps({
