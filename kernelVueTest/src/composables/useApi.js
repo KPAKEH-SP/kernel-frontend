@@ -12,5 +12,7 @@ export const useApi = (params = {}) => {
             headers: {'X-Token': token.value}
         })
         .then(t => t.data)
-    });
+    },
+    undefined,
+    {immediate: false});
 };

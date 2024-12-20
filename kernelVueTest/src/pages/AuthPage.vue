@@ -1,11 +1,12 @@
 <script setup>
     import { router } from '@/router';
-    import axios, { AxiosError } from 'axios';
+    import { AxiosError } from 'axios';
     import { ref } from 'vue';
     import PrimaryButton from '@/components/ui/PrimaryButton.vue';
     import { PhFlashlight, PhSignIn, PhUserPlus } from '@phosphor-icons/vue';
     import FormSwitcherArrow from '@/components/ui/FormSwitcher.vue';
     import PasswordInput from '@/components/ui/PasswordInput.vue';
+    import { useApi } from '@/composables/useApi';
 
     const error = ref('');
     const regUsername = ref('');
@@ -21,14 +22,14 @@
     const activeSlot = ref('top');
     const regErrorShowed = ref(false);
 
+    const userInfoApi = useApi({url: "api/auth/user-info", method: "get"})
+
     const userInfo = () => {
         var storageToken = localStorage.getItem('token');
         if (storageToken == null) {
             return;
         }
-        axios.post("/api/auth/user-info", {
-            token: storageToken
-        })
+        userInfoApi.execute()
         .then(function(response) {
             console.log('Redirect to: /')
             router.push({path: '/'});
@@ -42,6 +43,8 @@
             }
         });
     }
+
+    const registerApi = useApi({url: "/api/auth/registration", method: "post"});
 
     const register = () => {
         regErrorShowed.value = true;
@@ -114,28 +117,23 @@
 
         regErrorShowed.value = false;
 
-        axios.post('/api/auth/registration', {
-            username: regUsername.value,
-            email: regEmail.value,
-            password: regPassword.value
-        })
+        registerApi.execute(2000, {data: { username: regUsername.value, email: regEmail.value, password: regPassword.value}})
         .then(function (response) {
-            localStorage.setItem("token", response.data);
+            localStorage.setItem("token", response);
             userInfo();
         })
         .catch(function (serverError) {
-            console.log(serverError.response.data.message);
-            error.value = serverError.response.data.message;
+            console.log(serverError.response.message);
+            error.value = serverError.response.message;
         });
     }
 
+    const loginApi = useApi({url: "/api/auth/login", method: "post"})
+
     const login = () => {
-        axios.post("/api/auth/login", {
-            username: loginUsername.value,
-            password: loginPassword.value
-        })
+        loginApi.execute(2000, {data: {username: loginUsername.value, password: loginPassword.value}})
         .then(function(response) {
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("token", response.token);
             router.push({path: '/'});
         })
         .catch(function (error) {
