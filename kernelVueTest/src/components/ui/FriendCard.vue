@@ -60,7 +60,6 @@
     height: 300px;
     perspective: 1000px;
     display: inline-block;
-    cursor: pointer;
     padding: 5%;
     margin: 10px;
   }
