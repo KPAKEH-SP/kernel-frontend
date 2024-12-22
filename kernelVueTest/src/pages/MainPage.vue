@@ -8,7 +8,7 @@
     import Modal from '@/components/ui/Modal.vue'
     import { router } from '@/router';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
-    import { PhBell, PhGear } from '@phosphor-icons/vue';
+    import { PhArrowDown, PhBell, PhCaretCircleDown, PhCaretLineDown, PhChatsCircle, PhGear, PhUsers } from '@phosphor-icons/vue';
     import { useApi } from '@/composables/useApi';
     
     const storageToken = localStorage.getItem('token');
@@ -316,10 +316,13 @@
     </Modal>
 
     <div class="main-container">
-        <div class="servers-panel">
-            <div class="servers-list">
-                <button class="server-button" @click="openedFriendsPanel = true">Frnds</button>
-                <button class="server-button" @click="openedChatsPanel = (!openedChatsPanel)">Chats</button>
+        <div class="up-menu">
+            <PhChatsCircle @click="openedChatsPanel = (!openedChatsPanel)" class="up-item" :size="40"/>
+            <PhUsers @click="openedFriendsPanel = true" class="up-item" :size="40"/>
+            <div class="account-notifications-wrapper">
+                <PhBell class="account-notifications":size="40"/>
+                <div class="notifications-menu">
+                </div>
             </div>
             <div class="account-button">
                 <div class="avatar-wrapper">
@@ -330,15 +333,11 @@
                     
                 </div>
                 <div class="account-menu">
-                    <div class="account-notifications-wrapper">
-                        <PhBell class="account-notifications":size="30"/>
-                        <div class="notifications-menu">
-                            
-                        </div>
-                    </div>
                     <PhGear class="account-settings" @click="openedAccountPanel = true" :size="30"/>
-                    <!--PrimaryButton @click="openedAccountPanel = true" text="settings" size="s" color=""/-->
                 </div>
+            </div>
+            <div class="open-up-menu">
+                <PhCaretLineDown :size="30"/>
             </div>
         </div>
         <div class="main-plane">
