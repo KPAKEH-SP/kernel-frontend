@@ -117,7 +117,7 @@
 
         regErrorShowed.value = false;
 
-        registerApi.execute(2000, {data: { username: regUsername.value, email: regEmail.value, password: regPassword.value}})
+        registerApi.execute(0, {data: { username: regUsername.value, email: regEmail.value, password: regPassword.value}})
         .then(function (response) {
             localStorage.setItem("token", response);
             userInfo();
@@ -131,7 +131,7 @@
     const loginApi = useApi({url: "/api/auth/login", method: "post"})
 
     const login = () => {
-        loginApi.execute(2000, {data: {username: loginUsername.value, password: loginPassword.value}})
+        loginApi.execute(0, {data: {username: loginUsername.value, password: loginPassword.value}})
         .then(function(response) {
             localStorage.setItem("token", response.token);
             router.push({path: '/'});
