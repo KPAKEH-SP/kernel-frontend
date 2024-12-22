@@ -55,7 +55,7 @@
         console.log(chats);
     };
 
-    const getChatsApi = useApi({url: "/api/chats/get", method: "get"});
+    const getChatsApi = useApi({url: "/api/chats/personal/get", method: "get"});
 
     const getChats = async () => {
         try {
@@ -185,7 +185,7 @@
         });
     }
 
-    const chatApi = useApi({url: "/api/chats/create", method: "post"});
+    const chatApi = useApi({url: "/api/chats/personal/create", method: "post"});
 
 
     const chat = async (friendUsername) => {
