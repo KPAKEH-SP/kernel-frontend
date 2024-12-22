@@ -341,18 +341,20 @@
             </div>
         </div>
         <div class="main-plane">
-            <div v-if="openedChatsPanel" id="chats-panel" class="chats-panel">
-                <div class="chat" v-for="chat in chats">
-                    <button class="chat-button" @click="connectToStompChat(chat.chatInfo.chatId)">
-                        <div class="chat-avatar">
-                            <img :src="chat.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
-                        </div> 
-                        <div class="chat-name">
-                            {{ chat.chatName }}
-                        </div>
-                    </button>
+            <Transition name="chats-panel">
+                <div v-if="openedChatsPanel" id="chats-panel" class="chats-panel">
+                    <div class="chat" v-for="chat in chats">
+                        <button class="chat-button" @click="connectToStompChat(chat.chatInfo.chatId)">
+                            <div class="chat-avatar">
+                                <img :src="chat.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
+                            </div> 
+                            <div class="chat-name">
+                                {{ chat.chatName }}
+                            </div>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </Transition>
             <div v-if="openedChatWindow" class="chat-window">
                 <div class="chat-settings">
                     <div class="chat-name"> {{ currentChatName }}</div>
