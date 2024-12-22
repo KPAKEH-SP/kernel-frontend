@@ -148,7 +148,7 @@
         try {
             if (storageToken != null) {
                 console.log(friendUsername);
-                removeFriendApi.execute(2000, {data: {username: friendUsername}})
+                removeFriendApi.execute(0, {data: {username: friendUsername}})
                 .then(function(response) {
                     console.log(response);
                     updateFriends(response);
@@ -162,7 +162,7 @@
     const addFriendApi = useApi({url: "/api/friends/add", method: "post"});
 
     const addFriend = (friendUsername) => {
-        addFriendApi.execute(2000, {data: {username: friendUsername}})
+        addFriendApi.execute(0, {data: {username: friendUsername}})
         .then(function (response) {
             updateFriends(response);
             console.log(response);
@@ -175,7 +175,7 @@
     const acceptFriendApi = useApi({url: "/api/friends/accept", method: "post"});
 
     const acceptFriend = (friendUsername) => {
-        acceptFriendApi.execute(2000, {data: {username: friendUsername}})
+        acceptFriendApi.execute(0, {data: {username: friendUsername}})
         .then(function (response) {
             updateFriends(response);
             console.log(response);
@@ -189,7 +189,7 @@
 
 
     const chat = async (friendUsername) => {
-        chatApi.execute(2000, {data: {username: friendUsername}})
+        chatApi.execute(0, {data: {username: friendUsername}})
         .then(function (response) {
             console.log(response);
             updateChats(response);
@@ -292,7 +292,7 @@
     const deleteMessageApi = useApi({url: "api/messages/delete", method: "post"})
 
     const deleteMessage = (messageId) => {
-        deleteMessageApi.execute(2000, {data: {chatId: currentChatId.value, messageId: messageId}})
+        deleteMessageApi.execute(0, {data: {chatId: currentChatId.value, messageId: messageId}})
         .catch(function (error) {
             console.log(error);
         });
