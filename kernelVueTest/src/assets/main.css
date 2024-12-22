@@ -419,11 +419,11 @@ body {
 
 .chats-panel {
   width: 15%;
-  height: 100%;
   border-right: 3px solid #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
 
 .chat {
@@ -631,3 +631,19 @@ body {
   position: absolute;
 }
 
+.chats-panel-enter-active {
+  animation: chats-panel 0.5s;
+}
+
+.chats-panel-leave-active {
+  animation: chats-panel 0.5s reverse;
+}
+
+@keyframes chats-panel {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 15%;
+  }
+}
