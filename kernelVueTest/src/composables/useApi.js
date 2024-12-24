@@ -2,7 +2,7 @@ import { useAsyncState } from '@vueuse/core'
 import axios from 'axios'
 import { useToken } from './useToken';
 
-export const useApi = (params = {}) => {
+export const useApi = (params = {}, asyncOptions) => {
     const token = useToken();
 
     return useAsyncState((args = {}) => {
@@ -14,5 +14,5 @@ export const useApi = (params = {}) => {
         .then(t => t.data)
     },
     undefined,
-    {immediate: false});
+    {immediate: false, throwError: true, ...asyncOptions});
 };

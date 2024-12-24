@@ -24,8 +24,8 @@
     </div>
 
     <div class="pages">
-        <PrimaryButton @click="openedFriendsList = true, openedRequestsList = false" text="friends" size="" color=""/>
-        <PrimaryButton @click="openedRequestsList = true, openedFriendsList = false" text="requests" size="" color=""/>    
+        <PrimaryButton @click="openedFriendsList = true, openedRequestsList = false" text="friends" size="" color="" :class="{'active-page': openedFriendsList === true}"/>
+        <PrimaryButton @click="openedRequestsList = true, openedFriendsList = false" text="requests" size="" color="" :class="{'active-page': openedRequestsList ===true}"/>    
     </div>
 
     <div v-if="openedFriendsList" class="list">
@@ -50,6 +50,11 @@
 </template>
 
 <style scoped>
+    .active-page {
+        color: #00ffff;
+        text-shadow: #00ffff 0 0 6px;
+    }
+
     .list {
         display: flex;
         align-items: center;
