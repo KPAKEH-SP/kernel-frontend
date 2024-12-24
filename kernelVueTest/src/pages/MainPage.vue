@@ -8,7 +8,7 @@
     import Modal from '@/components/ui/Modal.vue'
     import { router } from '@/router';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
-    import { PhArrowDown, PhBell, PhCaretCircleDown, PhCaretLineDown, PhChatsCircle, PhGear, PhUsers } from '@phosphor-icons/vue';
+    import { PhBell, PhCaretLineDown, PhChatsCircle, PhGear, PhUsers } from '@phosphor-icons/vue';
     import { useApi } from '@/composables/useApi';
     
     const storageToken = localStorage.getItem('token');
@@ -196,11 +196,9 @@
         })
         .catch(function (error) {
             if (error.status == 409) {
-                connectToStompChat(error.response.data.message);
                 openedFriendsPanel.value = false;
-                openedChatsPanel.value = true;
+                connectToStompChat(error.response.data);
             }
-            console.log(error);
         });
     }
 
@@ -218,6 +216,8 @@
         stompClient.value = Webstomp.over(socket);
 
         currentChatId.value = chatId;
+        console.log(chats.value);
+        console.log(chatId);
         currentChatName.value = chats.value.find(chat => chat.chatInfo.chatId === chatId).chatName;
 
         stompClient.value.connect({}, () => {
