@@ -1,7 +1,7 @@
 <script setup>    
     import SockJS from 'sockjs-client';
     import Webstomp from 'webstomp-client';
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     import PrimaryButton from '@/components/ui/PrimaryButton.vue';
     import AccountPanel from '@/components/AccountPanel.vue';
     import FriendsPanel from '@/components/FriendsPanel.vue';
@@ -10,6 +10,7 @@
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { PhBell, PhCaretLineDown, PhChatsCircle, PhGear, PhUsers } from '@phosphor-icons/vue';
     import { useApi } from '@/composables/useApi';
+    import { useWebsocket } from '@/composables/useWebsocket';
     
     const storageToken = localStorage.getItem('token');
     const username = ref('');
@@ -79,11 +80,27 @@
         let updatedFriends = [];
         
         for (const friend of friendsResponse) {
-            const avatar = getAvatar(friend.user.username);
-            updatedFriends.push({friendAvatar: avatar, friendObj: friend});
+            console.log(friend.user);
+            if (friend.user.username === username.value){
+                const avatar = getAvatar(friend.pendingFrom.username);
+                updatedFriends.push({
+                    avatar: avatar, 
+                    firendUsername: friend.pendingFrom.username, 
+                    status: friend.status,
+                    pendingFrom: friend.pendingFrom.username});
+            } else {
+                const avatar = getAvatar(friend.user.username);
+                updatedFriends.push({
+                    avatar: avatar,
+                    firendUsername: friend.user.username,
+                    status: friend.status,
+                    pendingFrom: friend.pendingFrom.username});
+
+            }
         }
 
         friends.value = updatedFriends;
+        console.log("UPDATED FRIENDS >>> ", friends.value);
     }
 
     const getFrindsApi = useApi({url: "api/friends/get", method: "get"});
@@ -246,20 +263,27 @@
             console.error('WebSocket connection error:', error);
         });
     };
+    
+
+    const friendsWebSocket = useWebsocket();
+    friendsWebSocket.emitter.on('wsMessage', (message) =>  {
+        const jsonMessage = JSON.parse(message.body);
+        console.log(jsonMessage);
+        updateFriends(jsonMessage);
+    });
+
+    watch(getUserApi.state, (state) => {
+        console.log(state);
+
+        if (state && state.username != '') {
+            friendsWebSocket.connect(`/topic/requests/friend/${state.username}`);
+        }
+    });
 
     const connectToWebSocket = () => {
         const socket = new SockJS('/ws');
         stompClient.value = Webstomp.over(socket);
-
         stompClient.value.connect({}, () => {
-            console.log('WebSocket connected!');
-            stompClient.value.subscribe(`/topic/requests/friend/${username.value}`, (message) => {
-                getFriends();
-                console.log(message);
-            });
-
-            console.log(stompClient.value);
-
             stompClient.value.subscribe(`/topic/notifications/${username.value}`, (message) => {
                 getNotifications();
                 console.log(message);
