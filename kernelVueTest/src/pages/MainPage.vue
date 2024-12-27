@@ -51,12 +51,9 @@
                 });
             }
         }
-
-        console.log('Chats list formed: ');
-        console.log(chats);
     };
 
-    const getChatsApi = useApi({url: "/api/chats/personal/get", method: "get"});
+    const getChatsApi = useApi({url: "/api/chats/get", method: "get"});
 
     const getChats = async () => {
         try {
@@ -64,23 +61,19 @@
                 getChatsApi.execute()
                 .then(function(response) {
                     updateChats(response);
-                    console.log(chats);
                 });
             }
         } catch (error) {
-                console.log(error);
+            console.log(error)
         }
     }
     
     const updateFriends = (friendsResponse) => {
-        console.log("FRIENDS RESPONSE >>> ", friendsResponse);
-
         friends.value = [];
 
         let updatedFriends = [];
         
         for (const friend of friendsResponse) {
-            console.log(friend.user);
             if (friend.user.username === username.value){
                 const avatar = getAvatar(friend.pendingFrom.username);
                 updatedFriends.push({
@@ -100,7 +93,6 @@
         }
 
         friends.value = updatedFriends;
-        console.log("UPDATED FRIENDS >>> ", friends.value);
     }
 
     const getFrindsApi = useApi({url: "api/friends/get", method: "get"});
@@ -111,7 +103,6 @@
                 getFrindsApi.execute()
                 .then(function(response) {
                     updateFriends(response);
-                    console.log(friends);
                 });
             }
         } catch (error) {
@@ -126,7 +117,6 @@
             getNotificationsApi.execute()
             .then(function(response) {
                 notifications.value = response;
-                console.log("NOTIFICATIONS >>> ", notifications);
             });
         } catch (error) {
             console.log(error);
@@ -140,7 +130,6 @@
             if (storageToken != null) {   
                 await getUserApi.execute()
                 .then(function(response) {
-                    console.log(response);
                     username.value = response.username;
                     getFriends();
                     getChats();
@@ -152,7 +141,6 @@
             }
         } catch (error) {
             console.log(error);
-            console.log('Redirect to: /auth');
             router.push({path: '/auth'});
         }
     }
@@ -164,10 +152,8 @@
     const removeFriend = async (friendUsername) => {
         try {
             if (storageToken != null) {
-                console.log(friendUsername);
                 removeFriendApi.execute(0, {data: {username: friendUsername}})
                 .then(function(response) {
-                    console.log(response);
                     updateFriends(response);
                 });
             }
@@ -182,7 +168,6 @@
         addFriendApi.execute(0, {data: {username: friendUsername}})
         .then(function (response) {
             updateFriends(response);
-            console.log(response);
         })
         .catch(function (error) {
             console.log(error);
@@ -195,21 +180,18 @@
         acceptFriendApi.execute(0, {data: {username: friendUsername}})
         .then(function (response) {
             updateFriends(response);
-            console.log(response);
         })
         .catch(function (error) {
             console.log(error);
         });
     }
 
-    const chatApi = useApi({url: "/api/chats/personal/create", method: "post"});
-
+    const chatApi = useApi({url: "/api/chats/create", method: "post"});
 
     const chat = async (friendUsername) => {
         chatApi.execute(0, {data: {username: friendUsername}})
         .then(function (response) {
-            console.log(response);
-            updateChats(response);
+            getChats();
         })
         .catch(function (error) {
             if (error.status == 409) {
@@ -233,8 +215,6 @@
         stompClient.value = Webstomp.over(socket);
 
         currentChatId.value = chatId;
-        console.log(chats.value);
-        console.log(chatId);
         currentChatName.value = chats.value.find(chat => chat.chatInfo.chatId === chatId).chatName;
 
         stompClient.value.connect({}, () => {
@@ -247,7 +227,6 @@
                     const newMessage = {senderAvatar: avatar, data: message};
                     messages.value.push(newMessage);
                 }
-                console.log(messages);
             });
 
             chatSubscription = stompClient.value.subscribe(`/topic/chat/${chatId}`, (message) => {
@@ -268,13 +247,10 @@
     const friendsWebSocket = useWebsocket();
     friendsWebSocket.emitter.on('wsMessage', (message) =>  {
         const jsonMessage = JSON.parse(message.body);
-        console.log(jsonMessage);
         updateFriends(jsonMessage);
     });
 
     watch(getUserApi.state, (state) => {
-        console.log(state);
-
         if (state && state.username != '') {
             friendsWebSocket.connect(`/topic/requests/friend/${state.username}`);
         }
@@ -286,13 +262,10 @@
         stompClient.value.connect({}, () => {
             stompClient.value.subscribe(`/topic/notifications/${username.value}`, (message) => {
                 getNotifications();
-                console.log(message);
 
                 const text = message.body;
                 const notification = new Notification("Kernel", { body: text });
             });
-
-            console.log(stompClient.value);
         });
 
         return stompClient;
@@ -305,7 +278,7 @@
             let chatId = currentChatId.value;
 
             const payload = {
-                sender: storageToken,
+                token: storageToken,
                 content: newMessage.value
             };
             stompClient.value.send(`/kernel/chat/${chatId}`, JSON.stringify(payload));
