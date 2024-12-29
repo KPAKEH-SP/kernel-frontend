@@ -33,6 +33,7 @@
         @click="toggleFlip">
     <div class="card">
       <div class="card-front">
+        <pixel-canvas data-colors="#2d3133, #365757, #003333" class="pixel-canvas"></pixel-canvas>
         <div class="avatar">
           <img :src="getAvatar(props.username)" class="avatar-image" onerror="this.style.display='none';"/>
           <div v-if="showCircles" class="spinning-circles" id="circles">
@@ -138,5 +139,9 @@
   .friend-name {
     margin-top: 5%;
     text-align: center;
+  }
+
+  .pixel-canvas {
+    position: absolute;
   }
 </style>
