@@ -1,18 +1,42 @@
+<template>
+    <div :class="$style['account-panel']">
+        <button 
+        @mouseenter="showCircles = true" 
+        @mouseleave="showCircles = false" 
+        @click="openFileDialog"  
+        :class="$style.avatar">
+            <img :src="avatar" alt="Avatar" :class="$style['avatar-image']"/>
+            <div v-if="showCircles" :class="$style['spinning-circles']" id="circles">
+                <div :class="$style['spinning-circle']"></div>
+                <div :class="$style['spinning-circle']"></div>
+                <div :class="$style['spinning-circle']"></div>
+                <div :class="$style['spinning-circle']"></div>
+            </div>
+        </button>
+
+        <input 
+            type="file" 
+            ref="fileInput" 
+            @change="uploadAvatar" 
+            style="display: none;" 
+        />
+
+        <div>{{ username.value }}</div>
+        <PrimaryButton @click="handleLogOut" text="log out" size="" color="red"/>
+    </div>
+</template>
+
 <script setup>
     import PrimaryButton from './ui/PrimaryButton.vue';
     import { router } from '@/router';
     import { ref } from 'vue';
-    import axios from 'axios';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
+    import { useSharedUsername } from '@/composables/useSharedUsername';
+    import { useApi } from '@/composables/useApi';
 
     const showCircles = ref(false);
-
-    const avatar = defineModel('avatar', {type: String});
-
-    const props = defineProps({
-        username:{type:String, required:true},
-        token:{type:String, required:true}
-    });
+    const { username } = useSharedUsername();
+    let avatar = getAvatar(username.value);
 
     const handleLogOut = () => {
         localStorage.removeItem("token");
@@ -25,6 +49,8 @@
         fileInput.value.click();
     };
 
+    const uploadAvatarApi = useApi({url:'/api/users/avatar/upload', method: 'post'});
+
     const uploadAvatar = async (event) => {
         const file = event.target.files[0];
         if (file == null || file == undefined) return;
@@ -32,55 +58,20 @@
         const formData = new FormData();
         formData.append('file', file);
 
-        try {
-            const response = await axios.post('/api/users/avatar/upload/' + props.token, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                responseType: 'blob'
-            });
-            
-            console.log(response);
-
-            avatar.value = getAvatar(props.username, true);
-            
-            console.log("Аватар загружен успешно");
-        } catch (error) {
+        uploadAvatarApi.execute(0, {data: formData, 
+            headers: {'Content-Type': 'multipart/form-data'},
+            responseType: 'blob'})
+        .then(() => {
+            avatar = getAvatar(username.value, true);
+        })
+        .catch(function(error) {
             console.error('Ошибка загрузки аватарки:', error);
-        }
-    };
+
+        });
+    }
 </script>
 
-
-<template>
-    <div class="account-panel">
-        <button 
-        @mouseenter="showCircles = true" 
-        @mouseleave="showCircles = false" 
-        @click="openFileDialog"  
-        class="avatar">
-            <img :src="avatar" alt="Avatar" class="avatar-image" />
-            <div v-if="showCircles" class="spinning-circles" id="circles">
-                <div class="spinning-circle"></div>
-                <div class="spinning-circle"></div>
-                <div class="spinning-circle"></div>
-                <div class="spinning-circle"></div>
-            </div>
-        </button>
-
-        <input 
-            type="file" 
-            ref="fileInput" 
-            @change="uploadAvatar" 
-            style="display: none;" 
-        />
-
-        <div>{{ props.username }}</div>
-        <PrimaryButton @click="handleLogOut" text="log out" size="" color="red"/>
-    </div>
-</template>
-
-<style>
+<style module>
     .account-panel {
         display: flex;
         flex-direction: column;
@@ -198,36 +189,36 @@
     }
 
     .avatar-upload {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  text-align: center;
-}
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        text-align: center;
+    }
 
-.file-input {
-  display: block;
-  margin: 10px auto;
-}
+    .file-input {
+        display: block;
+        margin: 10px auto;
+    }
 
-.upload-button {
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    .upload-button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-.upload-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
+    .upload-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 
-.preview img {
-  max-width: 100%;
-  border-radius: 50%;
-  margin-top: 10px;
-}
+    .preview img {
+        max-width: 100%;
+        border-radius: 50%;
+        margin-top: 10px;
+    }
 </style>

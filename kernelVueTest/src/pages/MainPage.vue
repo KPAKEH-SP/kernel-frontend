@@ -1,29 +1,26 @@
 <script setup>    
     import SockJS from 'sockjs-client';
     import Webstomp from 'webstomp-client';
-    import { onMounted, ref, watch } from 'vue';
+    import { ref } from 'vue';
     import PrimaryButton from '@/components/ui/PrimaryButton.vue';
     import AccountPanel from '@/components/AccountPanel.vue';
     import FriendsPanel from '@/components/FriendsPanel.vue';
     import Modal from '@/components/ui/Modal.vue'
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { useApi } from '@/composables/useApi';
-    import { useWebsocket } from '@/composables/useWebsocket';
     import UpMenu from '@/components/UpMenu.vue';
     import { useSharedUsername } from '@/composables/useSharedUsername';
     import ChatsPanel from '@/components/ChatsPanel.vue';
+    import { useSharedChats } from '@/composables/useSharedChats';
     
     const storageToken = localStorage.getItem('token');
     const { username } = useSharedUsername();
-    const friends = ref([]);
-    const chats = ref([]);
+    const { chats } = useSharedChats();
     const messages = ref([]);
     const newMessage = ref('');
     const stompClient = ref(null);
     const currentChatId = ref();
     const currentChatName =ref();
-    const userAvatar = ref();
-    const notifications = ref([]);
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
@@ -32,104 +29,6 @@
 
     let historySubscription = null;
     let chatSubscription = null;
-    
-    const updateFriends = (friendsResponse) => {
-        friends.value = [];
-
-        let updatedFriends = [];
-        
-        for (const friend of friendsResponse) {
-            if (friend.user.username === username.value){
-                const avatar = getAvatar(friend.pendingFrom.username);
-                updatedFriends.push({
-                    avatar: avatar, 
-                    firendUsername: friend.pendingFrom.username, 
-                    status: friend.status,
-                    pendingFrom: friend.pendingFrom.username});
-            } else {
-                const avatar = getAvatar(friend.user.username);
-                updatedFriends.push({
-                    avatar: avatar,
-                    firendUsername: friend.user.username,
-                    status: friend.status,
-                    pendingFrom: friend.pendingFrom.username});
-
-            }
-        }
-
-        friends.value = updatedFriends;
-    }
-
-    const getFriendsApi = useApi({url: "api/friends/get", method: "get"});
-
-    const getFriends = async () => {
-        try {
-            if (storageToken != null) {
-                getFriendsApi.execute()
-                .then(function(response) {
-                    updateFriends(response);
-                });
-            }
-        } catch (error) {
-             console.log(error);
-        }
-    }
-
-    getFriends();
-    
-    const getNotificationsApi = useApi({url: "/api/notifications/get", method: "get"});
-
-    const getNotifications = async () => {
-        try {
-            getNotificationsApi.execute()
-            .then(function(response) {
-                notifications.value = response;
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    getNotifications();
-
-    const removeFriendApi = useApi({url: "/api/friends/remove", method: "post"});
-
-    const removeFriend = async (friendUsername) => {
-        try {
-            if (storageToken != null) {
-                removeFriendApi.execute(0, {data: {username: friendUsername}})
-                .then(function(response) {
-                    updateFriends(response);
-                });
-            }
-        } catch (error) {
-             console.log(error);
-        }
-    }
-    
-    const addFriendApi = useApi({url: "/api/friends/add", method: "post"});
-
-    const addFriend = (friendUsername) => {
-        addFriendApi.execute(0, {data: {username: friendUsername}})
-        .then(function (response) {
-            updateFriends(response);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
-
-    const acceptFriendApi = useApi({url: "/api/friends/accept", method: "post"});
-
-    const acceptFriend = (friendUsername) => {
-        acceptFriendApi.execute(0, {data: {username: friendUsername}})
-        .then(function (response) {
-            updateFriends(response);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
 
     const chatApi = useApi({url: "/api/chats/create", method: "post"});
 
@@ -187,21 +86,12 @@
             console.error('WebSocket connection error:', error);
         });
     };
-    
-
-    const friendsWebSocket = useWebsocket(`/topic/requests/friend/${username.value}`);
-    friendsWebSocket.emitter.on('wsMessage', (message) =>  {
-        const jsonMessage = JSON.parse(message.body);
-        updateFriends(jsonMessage);
-    });
 
     const connectToWebSocket = () => {
         const socket = new SockJS('/ws');
         stompClient.value = Webstomp.over(socket);
         stompClient.value.connect({}, () => {
             stompClient.value.subscribe(`/topic/notifications/${username.value}`, (message) => {
-                getNotifications();
-
                 const text = message.body;
                 const notification = new Notification("Kernel", { body: text });
             });
@@ -237,18 +127,11 @@
 
 <template>
     <Modal v-model:open="openedAccountPanel">
-        <AccountPanel :username="username"
-        :token="storageToken"
-        v-model:avatar="userAvatar"/>
+        <AccountPanel/>
     </Modal>
 
     <Modal v-model:open="openedFriendsPanel">
-        <FriendsPanel :username="username"
-        v-model:friends="friends"
-        @openChat="chat" 
-        @removeFriend="removeFriend"
-        @addFriend="addFriend" 
-        @accept="acceptFriend"/>
+        <FriendsPanel/>
     </Modal>
 
     <div class="main-container">
@@ -259,8 +142,9 @@
         <div class="main-plane">
             <Transition name="chats-panel">
                 <ChatsPanel 
-                v-if="openedChatsPanel" 
-                v-model:openedChatsPanel="openedChatsPanel"/>
+                v-if="openedChatsPanel"
+                v-model:chats="chats"
+                @connectToChat="connectToStompChat"/>
             </Transition>
 
             <div v-if="openedChatWindow" class="chat-window">
