@@ -1,19 +1,20 @@
 <script setup>    
     import SockJS from 'sockjs-client';
     import Webstomp from 'webstomp-client';
-    import { ref, watch } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
     import PrimaryButton from '@/components/ui/PrimaryButton.vue';
     import AccountPanel from '@/components/AccountPanel.vue';
     import FriendsPanel from '@/components/FriendsPanel.vue';
     import Modal from '@/components/ui/Modal.vue'
-    import { router } from '@/router';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
-    import { PhBell, PhCaretLineDown, PhChatsCircle, PhGear, PhUsers } from '@phosphor-icons/vue';
     import { useApi } from '@/composables/useApi';
     import { useWebsocket } from '@/composables/useWebsocket';
+    import UpMenu from '@/components/UpMenu.vue';
+    import { useSharedUsername } from '@/composables/useSharedUsername';
+    import ChatsPanel from '@/components/ChatsPanel.vue';
     
     const storageToken = localStorage.getItem('token');
-    const username = ref('');
+    const { username } = useSharedUsername();
     const friends = ref([]);
     const chats = ref([]);
     const messages = ref([]);
@@ -31,42 +32,6 @@
 
     let historySubscription = null;
     let chatSubscription = null;
-
-    const updateChats = async (chatsResponse) => {
-        chats.value = [];
-
-        for (const chat of chatsResponse) {
-            if (chat.users.length == 2) {
-                let updatedChats = [];
-
-                for (const user of chat.users) {
-                    if (user.username != username.value) {
-                        const avatar = getAvatar(user.username);
-                        updatedChats.push({ chatAvatar: avatar, chatName: user.username, chatInfo: chat });
-                    }
-                }
-
-                updatedChats.forEach(updatedChat => {
-                    chats.value.push(updatedChat);
-                });
-            }
-        }
-    };
-
-    const getChatsApi = useApi({url: "/api/chats/get", method: "get"});
-
-    const getChats = async () => {
-        try {
-            if (storageToken != null) {
-                getChatsApi.execute()
-                .then(function(response) {
-                    updateChats(response);
-                });
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
     
     const updateFriends = (friendsResponse) => {
         friends.value = [];
@@ -95,12 +60,12 @@
         friends.value = updatedFriends;
     }
 
-    const getFrindsApi = useApi({url: "api/friends/get", method: "get"});
+    const getFriendsApi = useApi({url: "api/friends/get", method: "get"});
 
     const getFriends = async () => {
         try {
             if (storageToken != null) {
-                getFrindsApi.execute()
+                getFriendsApi.execute()
                 .then(function(response) {
                     updateFriends(response);
                 });
@@ -109,6 +74,8 @@
              console.log(error);
         }
     }
+
+    getFriends();
     
     const getNotificationsApi = useApi({url: "/api/notifications/get", method: "get"});
 
@@ -122,30 +89,8 @@
             console.log(error);
         }
     }
-    
-    const getUserApi = useApi({url: "/api/auth/user-info", method: "get"});
 
-    const checkToken = async () => {
-        try {
-            if (storageToken != null) {   
-                await getUserApi.execute()
-                .then(function(response) {
-                    username.value = response.username;
-                    getFriends();
-                    getChats();
-                    getNotifications();
-                    userAvatar.value = getAvatar(username.value, true);
-                });
-            } else {
-                throw new Error("token is empty");
-            }
-        } catch (error) {
-            console.log(error);
-            router.push({path: '/auth'});
-        }
-    }
-
-    checkToken();
+    getNotifications();
 
     const removeFriendApi = useApi({url: "/api/friends/remove", method: "post"});
 
@@ -244,16 +189,10 @@
     };
     
 
-    const friendsWebSocket = useWebsocket();
+    const friendsWebSocket = useWebsocket(`/topic/requests/friend/${username.value}`);
     friendsWebSocket.emitter.on('wsMessage', (message) =>  {
         const jsonMessage = JSON.parse(message.body);
         updateFriends(jsonMessage);
-    });
-
-    watch(getUserApi.state, (state) => {
-        if (state && state.username != '') {
-            friendsWebSocket.connect(`/topic/requests/friend/${state.username}`);
-        }
     });
 
     const connectToWebSocket = () => {
@@ -313,45 +252,17 @@
     </Modal>
 
     <div class="main-container">
-        <div class="up-menu">
-            <PhChatsCircle @click="openedChatsPanel = (!openedChatsPanel)" class="up-item" :size="40"/>
-            <PhUsers @click="openedFriendsPanel = true" class="up-item" :size="40"/>
-            <div class="account-notifications-wrapper">
-                <PhBell class="account-notifications":size="40"/>
-                <div class="notifications-menu">
-                </div>
-            </div>
-            <div class="account-button">
-                <div class="avatar-wrapper">
-                    <img :src="userAvatar" class="avatar-image" onerror="this.style.display='none';"/>
-                </div>
-
-                <div class="status">
-                    
-                </div>
-                <div class="account-menu">
-                    <PhGear class="account-settings" @click="openedAccountPanel = true" :size="30"/>
-                </div>
-            </div>
-            <div class="open-up-menu">
-                <PhCaretLineDown :size="30"/>
-            </div>
-        </div>
+        <UpMenu v-model:openedAccountPanel="openedAccountPanel"
+        v-model:openedFriendsPanel="openedFriendsPanel"
+        v-model:openedChatsPanel="openedChatsPanel"
+        :username="username"/>
         <div class="main-plane">
             <Transition name="chats-panel">
-                <div v-if="openedChatsPanel" id="chats-panel" class="chats-panel">
-                    <div class="chat" v-for="chat in chats">
-                        <button class="chat-button" @click="connectToStompChat(chat.chatInfo.chatId)">
-                            <div class="chat-avatar">
-                                <img :src="chat.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
-                            </div> 
-                            <div class="chat-name">
-                                {{ chat.chatName }}
-                            </div>
-                        </button>
-                    </div>
-                </div>
+                <ChatsPanel 
+                v-if="openedChatsPanel" 
+                v-model:openedChatsPanel="openedChatsPanel"/>
             </Transition>
+
             <div v-if="openedChatWindow" class="chat-window">
                 <div class="chat-settings">
                     <div class="chat-name"> {{ currentChatName }}</div>
