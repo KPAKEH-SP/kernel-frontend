@@ -2,7 +2,7 @@ import { createSharedComposable } from "@vueuse/core";
 import { useApi } from "./useApi";
 import { router } from "@/router";
 import { useToken } from "./useToken";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 
 export const useSharedUsername = createSharedComposable(() => {    
     const username = ref('');

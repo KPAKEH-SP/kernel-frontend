@@ -5,7 +5,7 @@ import mitt from 'mitt';
 let stompClient = null;
 
 
-export const useWebsocket = (path) => {
+export const useWebstomp = (path) => {
     const socket = new SockJS('/ws');
     stompClient = Webstomp.over(socket)
     const emitter = mitt();

@@ -1,7 +1,7 @@
 <template>
         <div id="chats-panel" :class="$style['chats-panel']">
             <div :class="$style.chat" v-for="chat in chats">
-                <button :class="$style['chat-button']" @click="connectToStompChat(chat.chatInfo.chatId)">
+                <button :class="$style['chat-button']" @click="emit('connectToChat', chat.chatInfo.chatId)">
                     <div :class="$style['chat-avatar']">
                         <img :src="chat.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
                     </div> 
@@ -14,44 +14,10 @@
 </template>
 
 <script setup>
-    import { useApi } from '@/composables/useApi';
-    import { useSharedUsername } from '@/composables/useSharedUsername';
-    import { getAvatar } from '@/utils/users/avatars/GetAvatars';
-    import { onMounted, ref } from 'vue';
+    import { useSharedChats } from '@/composables/useSharedChats';
 
-    const openedChatsPanel = defineModel('openedChatsPanel', {type: Boolean, default: false});
-    const chats = ref([]);
-    const { username } = useSharedUsername();
-    
-    onMounted(() => {
-        const getChatsApi = useApi({url: "/api/chats/get", method: "get"});
-
-        try {
-            getChatsApi.execute()
-            .then(function(response) {
-                chats.value = [];
-
-                for (const chat of response) {
-                    if (chat.users.length == 2) {
-                        let updatedChats = [];
-
-                        for (const user of chat.users) {
-                            if (user.username != username.value) {
-                                const avatar = getAvatar(user.username);
-                                updatedChats.push({ chatAvatar: avatar, chatName: user.username, chatInfo: chat });
-                            }
-                        }
-
-                        updatedChats.forEach(updatedChat => {
-                            chats.value.push(updatedChat);
-                        });
-                    }
-                }
-            });
-        } catch (error) {
-            console.log(error)
-        }
-    })
+    const emit = defineEmits(["connectToChat"]);
+    const { chats } = useSharedChats();
 </script>
 
 <style module>

@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="card-back">
-        <pixel-canvas data-colors="#2d3133, #365757, #003333" class="pixel-canvas"></pixel-canvas>
+        <!--pixel-canvas data-colors="#2d3133, #365757, #003333" class="pixel-canvas"></pixel-canvas-->
         <div calss="back-slot">
           <slot></slot>
         </div>

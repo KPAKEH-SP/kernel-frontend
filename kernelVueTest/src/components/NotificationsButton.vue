@@ -7,7 +7,25 @@
 </template>
 
 <script setup>
+    import { useApi } from '@/composables/useApi';
     import { PhBell } from '@phosphor-icons/vue';
+    import { ref } from 'vue';
+
+    const notifications = ref([])
+
+    const getNotificationsApi = useApi({url: "/api/notifications/get", method: "get"});
+    const getNotifications = async () => {
+        try {
+            getNotificationsApi.execute()
+            .then(function(response) {
+                notifications.value = response;
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    getNotifications();
 </script>
 
 <style module>

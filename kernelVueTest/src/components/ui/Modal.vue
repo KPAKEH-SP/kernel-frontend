@@ -4,16 +4,16 @@
 
 <template>
     <transition name="blur">
-        <div v-if="isOpened" class="modal-blur"></div>
+        <div v-if="isOpened" :class="$style['modal-blur']"></div>
     </transition>
     
-    <dialog v-if="isOpened" :open="isOpened" class="modal">
-        <button class="close-button" @click="isOpened=false">X</button>
+    <dialog v-if="isOpened" :open="isOpened" :class="$style.modal">
+        <button :class="$style['close-button']" @click="isOpened=false">X</button>
         <slot></slot>
     </dialog>
 </template>
 
-<style>
+<style module>
     .modal {
         display: flex;
         flex-direction: column;
