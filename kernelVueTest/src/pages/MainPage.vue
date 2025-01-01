@@ -12,6 +12,7 @@
     import { useSharedUsername } from '@/composables/useSharedUsername';
     import ChatsPanel from '@/components/ChatsPanel.vue';
     import { useSharedChats } from '@/composables/useSharedChats';
+import Messages from '@/components/Messages.vue';
     
     const storageToken = localStorage.getItem('token');
     const { username } = useSharedUsername();
@@ -114,15 +115,6 @@
             newMessage.value = '';
         }
     };
-    
-    const deleteMessageApi = useApi({url: "api/messages/delete", method: "post"})
-
-    const deleteMessage = (messageId) => {
-        deleteMessageApi.execute(0, {data: {chatId: currentChatId.value, messageId: messageId}})
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
 </script>
 
 <template>
@@ -152,29 +144,7 @@
                     <div class="chat-name"> {{ currentChatName }}</div>
                     <div class="call"></div>
                 </div>
-                <div class="messages">
-                    <div v-for="(message, index) in messages" :key="index" class="message">
-                        <div class="user-avatar">
-                            <img :src="message.senderAvatar" class="avatar-image" onerror="this.style.display='none';"/>
-                        </div>
-                        <div class="message-info">
-                            <div class="author-info">
-                                {{ message.data.sender }}
-                            </div>
-                            <div class="content">
-                                {{ message.data.content }}
-                            </div>
-                            <div class="timestamp">
-                                {{ message.data.timestamp }}
-                            </div>
-                        </div>
-                        <div class="message-control">
-                            <div v-if="message.data.sender == username" class="delete-message">
-                                <PrimaryButton @click="deleteMessage(message.data.messageId)" text="del" size="" color="red"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Messages v-model:messages="messages"/>
                 <div class="message-panel">
                     <input v-on:keyup.enter="sendMessage()" v-model="newMessage" class="message-input" type="text" placeholder="enter message">
                     <button @click="sendMessage()" class="message-button">Send</button>
