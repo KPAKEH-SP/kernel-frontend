@@ -429,3 +429,7 @@ body {
       width: 15%;
   }
 }
+
+.chats-panel {
+  z-index: 10;
+}

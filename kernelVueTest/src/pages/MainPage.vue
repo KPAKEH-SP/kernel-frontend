@@ -6,7 +6,6 @@
     import FriendsPanel from '@/components/FriendsPanel.vue';
     import Modal from '@/components/ui/Modal.vue'
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
-    import { useApi } from '@/composables/useApi';
     import UpMenu from '@/components/UpMenu.vue';
     import { useSharedUsername } from '@/composables/useSharedUsername';
     import ChatsPanel from '@/components/ChatsPanel.vue';
@@ -29,21 +28,6 @@
 
     let historySubscription = null;
     let chatSubscription = null;
-
-    const chatApi = useApi({url: "/api/chats/create", method: "post"});
-
-    const chat = async (friendUsername) => {
-        chatApi.execute(0, {data: {username: friendUsername}})
-        .then(function (response) {
-            getChats();
-        })
-        .catch(function (error) {
-            if (error.status == 409) {
-                openedFriendsPanel.value = false;
-                connectToStompChat(error.response.data);
-            }
-        });
-    }
 
     const connectToStompChat = (chatId) => {
         if (historySubscription) {
@@ -135,7 +119,8 @@
                 <ChatsPanel 
                 v-if="openedChatsPanel"
                 v-model:chats="chats"
-                @connectToChat="connectToStompChat"/>
+                @connectToChat="connectToStompChat"
+                class="chats-panel"/>
             </Transition>
 
             <div v-if="openedChatWindow" class="chat-window">

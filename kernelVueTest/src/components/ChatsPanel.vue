@@ -28,6 +28,7 @@
         flex-direction: column;
         align-items: center;
         overflow: hidden;
+        z-index: 10;
     }
 
     .chat {

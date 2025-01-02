@@ -44,6 +44,7 @@
         height: 0px;
         transition: all 0.5s ease;
         box-sizing: border-box;
+        z-index: 5;
     }
 
     .up-menu:hover {
