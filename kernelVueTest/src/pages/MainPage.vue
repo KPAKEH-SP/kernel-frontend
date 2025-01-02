@@ -2,7 +2,6 @@
     import SockJS from 'sockjs-client';
     import Webstomp from 'webstomp-client';
     import { ref } from 'vue';
-    import PrimaryButton from '@/components/ui/PrimaryButton.vue';
     import AccountPanel from '@/components/AccountPanel.vue';
     import FriendsPanel from '@/components/FriendsPanel.vue';
     import Modal from '@/components/ui/Modal.vue'
@@ -12,7 +11,7 @@
     import { useSharedUsername } from '@/composables/useSharedUsername';
     import ChatsPanel from '@/components/ChatsPanel.vue';
     import { useSharedChats } from '@/composables/useSharedChats';
-import Messages from '@/components/Messages.vue';
+    import Messages from '@/components/Messages.vue';
     
     const storageToken = localStorage.getItem('token');
     const { username } = useSharedUsername();
