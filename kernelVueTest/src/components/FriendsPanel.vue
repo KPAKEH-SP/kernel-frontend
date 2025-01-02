@@ -27,9 +27,8 @@
         </div>
     </div>
 
-    <div v-if="openedRequestsList" class="list">
+    <div v-if="openedRequestsList" :class="$style.list">
         <div v-for="friend in friends" :key="friend.id">
-
             <FriendCard v-if="friend.status == 'PENDING'" :username="friend.username">
                 <PhCheck v-if="friend.pendingFrom != username" @click="acceptFriend(friend.username)" :class="$style['blue-icon']" :size="30"/>
                 <PhSpinnerGap :class="$style.loading" v-else/>
