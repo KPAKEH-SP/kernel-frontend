@@ -118,7 +118,6 @@
             <Transition name="chats-panel">
                 <ChatsPanel 
                 v-if="openedChatsPanel"
-                v-model:chats="chats"
                 @connectToChat="connectToStompChat"
                 class="chats-panel"/>
             </Transition>

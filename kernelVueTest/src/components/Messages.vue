@@ -27,8 +27,10 @@
 <script setup>
     import { useApi } from '@/composables/useApi';
     import PrimaryButton from './ui/PrimaryButton.vue';
+import { useSharedUsername } from '@/composables/useSharedUsername';
 
-    const messages = defineModel('messges', {type: Array});
+    const messages = defineModel('messages', {type: Array});
+    const { username } = useSharedUsername();
 
     const deleteMessageApi = useApi({url: "api/messages/delete", method: "post"})
     const deleteMessage = (messageId) => {
