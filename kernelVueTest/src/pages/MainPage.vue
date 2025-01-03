@@ -127,7 +127,7 @@
                     <div class="chat-name"> {{ currentChatName }}</div>
                     <div class="call"></div>
                 </div>
-                <Messages v-model:messages="messages"/>
+                <Messages v-model:messages="messages" :chat-id="currentChatId"/>
                 <div class="message-panel">
                     <input v-on:keyup.enter="sendMessage()" v-model="newMessage" class="message-input" type="text" placeholder="enter message">
                     <button @click="sendMessage()" class="message-button">Send</button>
