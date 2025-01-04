@@ -4,6 +4,7 @@ import AuthPage from './pages/AuthPage.vue'
 import MainPage from './pages/MainPage.vue'
 import { useSharedUsername } from './composables/useSharedUsername'
 import { watch } from 'vue'
+import { useSharedWebStomp } from './composables/useSharedWebStomp'
 
 const routes = [
   { path: '/auth', component: AuthPage },
@@ -15,12 +16,22 @@ const routes = [
       if (!username.value) {
         await new Promise((resolve) => {
           watch(username, (state) => {
-            if (state != ''){
+            if (state != '') {
               resolve();
             }
           });
         })
       }
+
+      const { isConnected } = useSharedWebStomp();
+      await new Promise((resolve) => {
+        watch(isConnected, (state) => {
+          if (state) {
+            resolve();
+          }
+        }, {immediate: true});
+      })
+
       next();
     }
   }
