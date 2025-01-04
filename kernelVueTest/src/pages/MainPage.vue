@@ -1,7 +1,5 @@
 <script setup>    
-    import SockJS from 'sockjs-client';
-    import Webstomp from 'webstomp-client';
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     import AccountPanel from '@/components/AccountPanel.vue';
     import FriendsPanel from '@/components/FriendsPanel.vue';
     import Modal from '@/components/ui/Modal.vue'
@@ -11,23 +9,49 @@
     import ChatsPanel from '@/components/ChatsPanel.vue';
     import { useSharedChats } from '@/composables/useSharedChats';
     import Messages from '@/components/Messages.vue';
+    import ViedoChat from '@/components/AudioChat.vue';
+    import { useWebRTC } from '@/composables/useWebRTC';
+    import { useSharedCurrentChatId } from '@/composables/useSharedCurrentChatId';
+    import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
     
     const storageToken = localStorage.getItem('token');
     const { username } = useSharedUsername();
     const { chats } = useSharedChats();
     const messages = ref([]);
     const newMessage = ref('');
-    const stompClient = ref(null);
-    const currentChatId = ref();
-    const currentChatName =ref();
+    const currentChatName = ref();
+    const { setChatId, currentChatId } = useSharedCurrentChatId();
+    const { stompClient } = useSharedWebStomp();
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
     const openedChatsPanel = ref(false);
     const openedChatWindow = ref(false);
+    const openedViedoChat = ref(false);
 
     let historySubscription = null;
     let chatSubscription = null;
+
+    const { handleOffer, handleAnswer, handleCandidate, createOffer, disconnect } = useWebRTC();
+
+    watch(openedViedoChat, (state) => {
+        if (state == false) {
+            disconnect();
+        }
+    })
+    
+    stompClient.subscribe(`/topic/webrtc/user/offer/${username.value}`, message => {
+        openedViedoChat.value = true;
+        handleOffer(message);
+    });
+
+    stompClient.subscribe(`/topic/webrtc/user/answer/${username.value}`, message => {
+        handleAnswer(message);
+    });
+
+    stompClient.subscribe(`/topic/webrtc/user/candidate/${username.value}`, message => {
+        handleCandidate(message);
+    });
 
     const connectToStompChat = (chatId) => {
         if (historySubscription) {
@@ -39,46 +63,37 @@
             chatSubscription = null;
         }
 
-        const socket = new SockJS('/ws');
-        stompClient.value = Webstomp.over(socket);
+        setChatId(chatId);
 
-        currentChatId.value = chatId;
         currentChatName.value = chats.value.find(chat => chat.chatInfo.chatId === chatId).chatName;
 
-        stompClient.value.connect({}, () => {
-            historySubscription = stompClient.value.subscribe(`/topic/chat/history/${chatId}`, (message) => {
-                const historyMessages = JSON.parse(message.body);
-                messages.value = [];
-                for(const message of historyMessages) {
-                    const avatar = getAvatar(message.sender);
-                    
-                    const newMessage = {senderAvatar: avatar, data: message};
-                    messages.value.push(newMessage);
-                }
-            });
-
-            chatSubscription = stompClient.value.subscribe(`/topic/chat/${chatId}`, (message) => {
-                const receivedMessage = JSON.parse(message.body);
-                const avatar = getAvatar(receivedMessage.sender)
-                const newMessage = {senderAvatar: avatar, data: receivedMessage};
+        historySubscription = stompClient.subscribe(`/topic/chat/history/${chatId}`, (message) => {
+            const historyMessages = JSON.parse(message.body);
+            messages.value = [];
+            for(const message of historyMessages) {
+                const avatar = getAvatar(message.sender);
+                
+                const newMessage = {senderAvatar: avatar, data: message};
                 messages.value.push(newMessage);
-            });
-            
-            openedChatWindow.value = true;
-            stompClient.value.send(`/kernel/chat/history/${chatId}`, {}, {});
-        }, (error) => {
-            console.error('WebSocket connection error:', error);
+            }
         });
+
+        chatSubscription = stompClient.subscribe(`/topic/chat/${chatId}`, (message) => {
+            const receivedMessage = JSON.parse(message.body);
+            const avatar = getAvatar(receivedMessage.sender)
+            const newMessage = {senderAvatar: avatar, data: receivedMessage};
+            messages.value.push(newMessage);
+        });
+        
+        openedChatWindow.value = true;
+        stompClient.send(`/kernel/chat/history/${chatId}`, {}, {});
+
     };
 
     const connectToWebSocket = () => {
-        const socket = new SockJS('/ws');
-        stompClient.value = Webstomp.over(socket);
-        stompClient.value.connect({}, () => {
-            stompClient.value.subscribe(`/topic/notifications/${username.value}`, (message) => {
-                const text = message.body;
-                const notification = new Notification("Kernel", { body: text });
-            });
+        stompClient.subscribe(`/topic/notifications/${username.value}`, (message) => {
+            const text = message.body;
+            const notification = new Notification("Kernel", { body: text });
         });
 
         return stompClient;
@@ -87,17 +102,20 @@
     connectToWebSocket();
 
     const sendMessage = () => {
-        if (newMessage.value.trim() && stompClient.value && stompClient.value.connected) {
-            let chatId = currentChatId.value;
-
+        if (newMessage.value.trim()) {
             const payload = {
                 token: storageToken,
                 content: newMessage.value
             };
-            stompClient.value.send(`/kernel/chat/${chatId}`, JSON.stringify(payload));
+            stompClient.send(`/kernel/chat/${currentChatId.value}`, JSON.stringify(payload));
             newMessage.value = '';
         }
     };
+
+    const openViedoChat = () => {
+        createOffer();
+        openedViedoChat.value = true;
+    }
 </script>
 
 <template>
@@ -107,6 +125,10 @@
 
     <Modal v-model:open="openedFriendsPanel">
         <FriendsPanel/>
+    </Modal>
+
+    <Modal v-model:open="openedViedoChat">
+        <ViedoChat/>
     </Modal>
 
     <div class="main-container">
@@ -125,7 +147,7 @@
             <div v-if="openedChatWindow" class="chat-window">
                 <div class="chat-settings">
                     <div class="chat-name"> {{ currentChatName }}</div>
-                    <div class="call"></div>
+                    <button @click="openViedoChat()"> Call </button>
                 </div>
                 <Messages v-model:messages="messages" :chat-id="currentChatId"/>
                 <div class="message-panel">
