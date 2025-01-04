@@ -9,7 +9,7 @@
     import ChatsPanel from '@/components/ChatsPanel.vue';
     import { useSharedChats } from '@/composables/useSharedChats';
     import Messages from '@/components/Messages.vue';
-    import ViedoChat from '@/components/ViedoChat.vue';
+    import ViedoChat from '@/components/AudioChat.vue';
     import { useWebRTC } from '@/composables/useWebRTC';
     import { useSharedCurrentChatId } from '@/composables/useSharedCurrentChatId';
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
