@@ -26,6 +26,7 @@
     import Messages from './Messages.vue';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
+import { useToken } from '@/composables/useToken';
 
     const { createOffer } = useWebRTC();
     const { currentChat } = useSharedChats();
@@ -37,6 +38,8 @@
 
     const messages = ref([]);
     const newMessage = ref('');
+
+    const storageToken = useToken();
 
     onMounted(() => {
         if (historySubscription) {
@@ -77,7 +80,7 @@
     const sendMessage = () => {
         if (newMessage.value.trim()) {
             const payload = {
-                token: storageToken,
+                token: storageToken.value,
                 content: newMessage.value
             };
             stompClient.send(`/kernel/chat/${currentChat.value.chatInfo.chatId}`, JSON.stringify(payload));
