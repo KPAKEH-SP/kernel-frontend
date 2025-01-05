@@ -1,13 +1,13 @@
 import { useToken } from './useToken';
 import { ref } from 'vue';
-import { useSharedCurrentChatId } from './useSharedCurrentChatId';
 import { useSharedWebStomp } from './useSharedWebStomp';
 import { createSharedComposable } from '@vueuse/core';
+import { useSharedChats } from './useSharedChats';
 
 export const useWebRTC = createSharedComposable(() => {
     const { stompClient } = useSharedWebStomp();
     const token = useToken();
-    const { currentChatId } = useSharedCurrentChatId();
+    const { currentChat } = useSharedChats();
 
     const localStream = ref(null);
     const remoteStream = ref(null);
@@ -50,7 +50,7 @@ export const useWebRTC = createSharedComposable(() => {
     const handleOffer = async (message) => {
         try {
             const jsonBody = JSON.parse(message.body);
-            if (jsonBody.chatId !== currentChatId.value) {
+            if (jsonBody.chatId !== currentChat.value.chatInfo.chatId) {
                 console.warn("Received offer for different chat ID:", jsonBody.chatId);
                 return;
             }
@@ -121,7 +121,7 @@ export const useWebRTC = createSharedComposable(() => {
         console.log("New ICE candidate:", event.candidate);
         if (event.candidate) {
             const payload = {
-                chatId: currentChatId.value,
+                chatId: currentChat.value.chatInfo.chatId,
                 initiatorToken: token.value,
                 data: JSON.stringify(event.candidate)
             };
@@ -141,7 +141,7 @@ export const useWebRTC = createSharedComposable(() => {
             .then(offer => peerConnection.setLocalDescription(offer))
             .then(() => {
                 const payload = {
-                    chatId: currentChatId.value,
+                    chatId: currentChat.value.chatInfo.chatId,
                     initiatorToken: token.value,
                     data: JSON.stringify(peerConnection.localDescription)
                 };
@@ -209,7 +209,7 @@ export const useWebRTC = createSharedComposable(() => {
 
         // Отправка сигнала о завершении сессии
         const payload = {
-            chatId: currentChatId.value,
+            chatId: currentChat.value.chatInfo.chatId,
             token: token.value
         };
         stompClient.send(`/kernel/webrtc/chat/disconnect`, JSON.stringify(payload));

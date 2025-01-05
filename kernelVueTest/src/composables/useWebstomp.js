@@ -1,15 +1,9 @@
-import Webstomp from 'webstomp-client';
-import SockJS from 'sockjs-client';
 import mitt from 'mitt';
-
-let stompClient = null;
-
+import { useSharedWebStomp } from './useSharedWebStomp';
 
 export const useWebstomp = (path) => {
-    const socket = new SockJS('/ws');
-    stompClient = Webstomp.over(socket)
     const emitter = mitt();
-    
+    const { stompClient } = useSharedWebStomp();
     stompClient.connect({}, () => {
         stompClient.subscribe(path, (message) => {
             emitter.emit('wsMessage', message);

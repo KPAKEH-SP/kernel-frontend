@@ -66,7 +66,7 @@
         height: 200px;
         width: 300%;
         top: 100%;
-        background-color: #000;
+        background-color: rgba(0, 0, 0, 0.8);
         border-color: #00ffff;
         box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
     }

@@ -124,6 +124,13 @@
     padding: 0px;
   }
 
+  #app {
+    background-image: url('/BackGround.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
 .main-panel {
   display: flex;
   flex-direction: column;
@@ -252,82 +259,6 @@ body {
   display: flex;
   width: 100%;
   height: 100%;
-}
-
-.chat-window {
-  display: flex;
-  height: 100%;
-  width: 100%;
-  flex-direction: column;
-}
-
-.message-input {
-  font-family: "Roboto Mono", monospace;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-size: var(--font-size);
-  line-height: var(--font-size);
-
-  background: transparent;
-  color: #ffffff;
-  border-color: solid #ffffff;
-
-  border: none;
-  border-bottom: solid #ffffff;
-  min-height: 3vh;
-
-  outline: none;
-  text-align: center;
-  flex-grow: 1;
-
-  transition: 0.3s ease;
-}
-
-.message-input:hover .message-input:focus {
-  box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
-  border-radius: 10vh;
-  border-color: #00ffff;
-  border-top: solid;
-  border-left: solid;
-  border-right: solid;
-  border-bottom: solid;
-  color: #00ffff;
-}
-
-.message-button {
-  background: transparent;
-  color: #ffffff;
-  border-color: solid #ffffff;
-  border-radius: 0px;
-  border: none;
-  border-bottom: solid #ffffff;
-  outline: none;
-  text-align: center;
-  transition: 0.3s ease;
-}
-
-.message-button:hover {
-  box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
-  border-radius: 10vh;
-  border-color: #00ffff;
-  border-top: solid;
-  border-left: solid;
-  border-right: solid;
-  border-bottom: solid;
-  color: #00ffff;
-}
-
-.message-panel {
-  width: 100%;
-  display: flex;
-  align-self: end;
-}
-
-.chat-settings {
-  width: 100%;
-  height: 10vh;
-  border-bottom: solid #ffffff;
 }
 
 .message-info {

@@ -7,8 +7,6 @@
             <div :class="$style['avatar-wrapper']">
                 <img :src="getAvatar(username, true)" onerror="this.style.display='none';" class="avatar-image"/>
             </div>
-
-            <div :class="$style.status"></div>
             
             <div :class="$style['account-menu']">
                 <PhGear :class="$style['account-settings']" @click="accountPnaelIsOpened = true" :size="30"/>
@@ -39,16 +37,19 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 100%;
         border: 0px solid #fff;
         height: 0px;
         transition: all 0.5s ease;
         box-sizing: border-box;
         z-index: 5;
+        background-color: rgba(0, 0, 0, 0.8);
+        margin: 10px;
+        margin-bottom: 5px;
+        border-radius: 3vh;
     }
 
     .up-menu:hover {
-        border: 3px solid #fff;
+        border: 1px solid #fff;
         height: 5vh;
     }
 
@@ -107,23 +108,11 @@
         transition: all 0.5s ease;
     }
 
-
-    .status {
-        height: 10px;
-        width: 10px;
-        background-color: #43ff43;
-        border-radius: 50%;
-        position: absolute;
-        bottom: 1px;
-        z-index: 20;
-        left: 1px;
-    }
-
     .account-menu {
         display: flex;
         flex-direction: column;
         position: absolute;
-        background-color: #000;
+        background-color: rgba(0, 0, 0, 0.8);
         border: 0px solid #fff;
         border-radius: 0vh 0vh 1vh 1vh;
         transition: all 0.5s ease;

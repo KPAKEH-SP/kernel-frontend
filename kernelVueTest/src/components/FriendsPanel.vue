@@ -48,7 +48,7 @@
     import { useConvertFriendResponse } from '@/composables/useConvertFriendResponse';
     import { useApi } from '@/composables/useApi';
     import { useWebstomp } from '@/composables/useWebstomp';
-import { useSharedChats } from '@/composables/useSharedChats';
+    import { useSharedChats } from '@/composables/useSharedChats';
 
     const { username } = useSharedUsername();
     const friends = ref([]);
@@ -114,6 +114,7 @@ import { useSharedChats } from '@/composables/useSharedChats';
         box-sizing: border-box;
         scrollbar-width: none;
         flex-grow: 1;
+        flex-wrap: wrap;
     }
 
     .pages {
