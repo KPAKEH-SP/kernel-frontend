@@ -11,17 +11,12 @@ export const useWebRTC = createSharedComposable(() => {
 
     const localStream = ref(null);
     const remoteStream = ref(null);
-    
-    // Создание функции для инициализации соединения
-    const createPeerConnection = () => {
-        return new RTCPeerConnection({
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' }
-            ]
-        });
-    };
 
-    let peerConnection = createPeerConnection();  // Инициализация соединения сразу
+    let peerConnection = new RTCPeerConnection({
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' }
+        ]
+    });  // Инициализация соединения сразу
 
     let pendingCandidates = [];
 
@@ -131,12 +126,7 @@ export const useWebRTC = createSharedComposable(() => {
     };
 
     const createOffer = () => {
-        console.log('>>> OFFER CREATING <<<');
-        if (peerConnection.signalingState === 'closed') {
-            // Создаем новое соединение, если текущее закрыто
-            peerConnection = createPeerConnection();
-        }
-        
+        console.log('>>> OFFER CREATING <<<');        
         peerConnection.createOffer()
             .then(offer => peerConnection.setLocalDescription(offer))
             .then(() => {
@@ -207,23 +197,13 @@ export const useWebRTC = createSharedComposable(() => {
         // Закрытие соединения PeerConnection
         peerConnection.close();
 
-        // Отправка сигнала о завершении сессии
-        const payload = {
-            chatId: currentChat.value.chatInfo.chatId,
-            token: token.value
-        };
-        stompClient.send(`/kernel/webrtc/chat/disconnect`, JSON.stringify(payload));
-
         // Создаем новое соединение для следующего звонка
-        peerConnection = createPeerConnection();
-
         console.log("Disconnected from chat.");
     }
 
     return {
         localStream,
         remoteStream,
-        peerConnection,
         handleOffer,
         handleAnswer,
         handleCandidate,

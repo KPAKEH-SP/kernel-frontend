@@ -26,12 +26,11 @@
     import Messages from './Messages.vue';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
-import { useToken } from '@/composables/useToken';
+    import { useToken } from '@/composables/useToken';
 
-    const { createOffer } = useWebRTC();
     const { currentChat } = useSharedChats();
     const { stompClient } = useSharedWebStomp();
-    const openedAudioChat = ref(false);
+    const openedAudioChat = defineModel('openedAudioChat', { type: Boolean });
 
     let historySubscription = null;
     let chatSubscription = null;
@@ -73,7 +72,14 @@ import { useToken } from '@/composables/useToken';
     });
 
     const openAudioChat = () => {
-        createOffer();
+        const payload = {
+            chatId: currentChat.value.chatInfo.chatId,
+            senderToken: storageToken.value,
+            respondentUsername: currentChat.value.chatName,
+            type: "REQUEST"
+        }; 
+        stompClient.send(`/kernel/user/call`, JSON.stringify(payload));
+
         openedAudioChat.value = true;
     }
 

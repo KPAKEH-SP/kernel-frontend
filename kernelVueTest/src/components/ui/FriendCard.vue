@@ -1,6 +1,7 @@
 <script setup>
   import { getAvatar } from '@/utils/users/avatars/GetAvatars';
   import { ref } from 'vue';
+  import UserAvatar from './UserAvatar.vue';
 
   const props = defineProps({
       username:{type:String, required:true}
@@ -33,17 +34,9 @@
         @click="toggleFlip">
     <div class="card">
       <div class="card-front">
-        
-        <div class="avatar">
-          <img :src="getAvatar(props.username)" class="avatar-image" onerror="this.style.display='none';"/>
-          <div v-if="showCircles" class="spinning-circles" id="circles">
-              <div class="spinning-circle"></div>
-              <div class="spinning-circle"></div>
-              <div class="spinning-circle"></div>
-              <div class="spinning-circle"></div>
-          </div>
-        </div>
-
+        <UserAvatar 
+        v-model:open="showCircles"
+        :username="username"/>
         <div class="friend-name">
           {{ props.username }}
         </div>
