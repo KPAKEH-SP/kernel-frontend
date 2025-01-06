@@ -125,11 +125,12 @@
             <Transition name="chats-panel">
                 <ChatsPanel 
                 v-if="openedChatsPanel"
-                v-model:openedAudioChat="openedAudioChat"
                 @connectToChat="openedChatWindow = true"
                 class="chats-panel"/>
             </Transition>
-            <ChatWindow v-if="openedChatWindow"/>
+            <ChatWindow 
+            v-if="openedChatWindow"
+            v-model:openedAudioChat="openedAudioChat"/>
         </div>
     </div>
 </template>
