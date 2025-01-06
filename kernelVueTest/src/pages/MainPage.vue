@@ -9,26 +9,35 @@
     import { useWebRTC } from '@/composables/useWebRTC';
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
     import ChatWindow from '@/components/ChatWindow.vue';
+    import CallWindow from '@/components/CallWindow.vue';
+    import { useSharedChats } from '@/composables/useSharedChats';
+    import { useToken } from '@/composables/useToken';
     
     const { username } = useSharedUsername();
     const { stompClient } = useSharedWebStomp();
+    const { setCurrentChat } = useSharedChats(); 
+    const token = useToken();
 
     const openedAccountPanel = ref(false);
     const openedFriendsPanel =  ref(false);
     const openedChatsPanel = ref(false);
     const openedChatWindow = ref(false);
-    const openedViedoChat = ref(false);
+    const openedAudioChat = ref(false);
+    const openedCallWindow = ref(false);
 
-    const { handleOffer, handleAnswer, handleCandidate, createOffer, disconnect } = useWebRTC();
+    const currentCallRequest = ref(null);
 
-    watch(openedViedoChat, (state) => {
+    const { handleOffer, handleAnswer, handleCandidate, disconnect, createOffer } = useWebRTC();
+
+    watch(openedAudioChat, (state) => {
         if (state == false) {
             disconnect();
         }
     })
     
     stompClient.subscribe(`/topic/webrtc/user/offer/${username.value}`, message => {
-        openedViedoChat.value = true;
+        openedAudioChat.value = true;
+        console.log("OPENED AUDIO CHAT >>> ", openedAudioChat.value);
         handleOffer(message);
     });
 
@@ -40,6 +49,19 @@
         handleCandidate(message);
     });
 
+    stompClient.subscribe(`/topic/user/call/request/${username.value}`, message => {
+        currentCallRequest.value = JSON.parse(message.body);
+        openedCallWindow.value = true;
+        console.log("CURRENT CALL REQUEST >>> ", currentCallRequest.value);
+    });
+    
+    stompClient.subscribe(`/topic/user/call/accept/${username.value}`, message => {
+        createOffer();
+    });
+
+    stompClient.subscribe(`/topic/user/call/reject/${username.value}`, message => {
+        disconnect();
+    });
     const connectToWebSocket = () => {
         stompClient.subscribe(`/topic/notifications/${username.value}`, (message) => {
             const text = message.body;
@@ -50,9 +72,42 @@
     }
 
     connectToWebSocket();
+
+    const acceptCall = () => {
+        setCurrentChat(currentCallRequest.value.chatId);
+        openedChatWindow.value = true;
+        const payload = {
+            chatId: currentCallRequest.value.chatId,
+            senderToken: token.value,
+            respondentUsername: currentCallRequest.value.senderUsername,
+            type: "ACCEPT"
+        };
+        stompClient.send(`/kernel/user/call`, JSON.stringify(payload));
+        openedCallWindow.value = false;
+    }
+
+    const rejectCall = () => {
+        disconnect();
+        const payload = {
+            chatId: currentCallRequest.value.chatId,
+            senderToken: token.value,
+            respondentUsername: currentCallRequest.value.senderUsername,
+            type: "REJECT"
+        };
+        stompClient.send(`/kernel/user/call`, JSON.stringify(payload));
+        currentCallRequest.value = null;
+        openedCallWindow.value = false;
+        openedAudioChat.value = false
+    }
 </script>
 
 <template>
+    <CallWindow 
+    v-if="openedCallWindow"
+    v-model:callRequest="currentCallRequest"
+    @call-rejected="rejectCall"
+    @call-accepted="acceptCall"/>
+
     <Modal v-model:open="openedAccountPanel">
         <AccountPanel/>
     </Modal>
@@ -70,10 +125,10 @@
             <Transition name="chats-panel">
                 <ChatsPanel 
                 v-if="openedChatsPanel"
+                v-model:openedAudioChat="openedAudioChat"
                 @connectToChat="openedChatWindow = true"
                 class="chats-panel"/>
             </Transition>
-
             <ChatWindow v-if="openedChatWindow"/>
         </div>
     </div>

@@ -14,5 +14,7 @@
         background-color: rgba(0, 0, 0, 0.8);
         overflow: hidden;
         border-radius: 3vh;
+        width: 100%;
+        height: 100%;
     }
 </style>
