@@ -21,7 +21,7 @@
             style="display: none;" 
         />
 
-        <div>{{ username.value }}</div>
+        <div>{{ userDataState.username }}</div>
         <PrimaryButton @click="handleLogOut" text="log out" size="" color="red"/>
     </div>
 </template>
@@ -31,12 +31,13 @@
     import { router } from '@/router';
     import { ref } from 'vue';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
-    import { useSharedUsername } from '@/composables/useSharedUsername';
+    import { useUserData } from '@/composables/useUserData';
     import { useApi } from '@/composables/useApi';
 
     const showCircles = ref(false);
-    const { username } = useSharedUsername();
-    let avatar = getAvatar(username.value);
+    const { state:userDataState } = useUserData();
+
+    let avatar = getAvatar(userDataState.value.username);
 
     const handleLogOut = () => {
         localStorage.removeItem("token");
@@ -62,7 +63,7 @@
             headers: {'Content-Type': 'multipart/form-data'},
             responseType: 'blob'})
         .then(() => {
-            avatar = getAvatar(username.value, true);
+            avatar = getAvatar(userDataState.value.username, true);
         })
         .catch(function(error) {
             console.error('Ошибка загрузки аватарки:', error);

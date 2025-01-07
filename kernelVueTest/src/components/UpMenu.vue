@@ -5,7 +5,7 @@
         <NotificationsButton/>
         <div :class="$style['account-button']">
             <div :class="$style['avatar-wrapper']">
-                <img :src="getAvatar(username, true)" onerror="this.style.display='none';" class="avatar-image"/>
+                <img :src="getAvatar(userDataState.username, true)" onerror="this.style.display='none';" class="avatar-image"/>
             </div>
             
             <div :class="$style['account-menu']">
@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-    import { useSharedUsername } from '@/composables/useSharedUsername';
+    import { useUserData } from '@/composables/useUserData';
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { PhCaretLineDown, PhChatsCircle, PhGear, PhUsers } from '@phosphor-icons/vue';
     import NotificationsButton from './NotificationsButton.vue';
@@ -28,7 +28,7 @@
     const friendsPanelIsOpened = defineModel('openedFriendsPanel', {type: Boolean, default:false});
     const accountPnaelIsOpened = defineModel('openedAccountPanel', {type: Boolean, default: false});
 
-    const { username } = useSharedUsername();
+    const { state:userDataState } = useUserData();
 </script>
 
 <style module>

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import AuthPage from './pages/AuthPage.vue'
 import MainPage from './pages/MainPage.vue'
-import { useSharedUsername } from './composables/useSharedUsername'
+import { useUserData } from './composables/useUserData'
 import { watch } from 'vue'
 import { useSharedWebStomp } from './composables/useSharedWebStomp'
 
@@ -12,15 +12,23 @@ const routes = [
     path: '/', 
     component: MainPage,
     beforeEnter: async (to, from, next) => {
-      const { username } = useSharedUsername();
-      if (!username.value) {
-        await new Promise((resolve) => {
-          watch(username, (state) => {
-            if (state != '') {
-              resolve();
-            }
-          });
-        })
+      const { isReady, error } = useUserData();
+      const authorized = await new Promise((resolve) => {
+        const { stop } = watch([isReady, error], ([isReadyValue, errorValue]) => {
+          if (isReadyValue) {
+            stop();
+            resolve(true);
+          }
+          else if (errorValue) {
+            stop();
+            resolve(false);
+          }
+        });
+      })
+
+      if (!authorized) {
+        next('/auth');
+        return;
       }
 
       const { isConnected } = useSharedWebStomp();

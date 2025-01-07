@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div :class="$style['message-control']">
-                <div v-if="message.data.sender == username">
+                <div v-if="message.data.sender == userDataState.username">
                     <PrimaryButton @click="deleteMessage(message.data.messageId)" text="del" size="" color="red"/>
                 </div>
             </div>
@@ -27,10 +27,10 @@
 <script setup>
     import { useApi } from '@/composables/useApi';
     import PrimaryButton from './ui/PrimaryButton.vue';
-    import { useSharedUsername } from '@/composables/useSharedUsername';
+    import { useUserData } from '@/composables/useUserData';
 
     const messages = defineModel('messages', {type: Array});
-    const { username } = useSharedUsername();
+    const { state:userDataState } = useUserData();
     const props = defineProps({chatId: {required: true}})
 
     const deleteMessageApi = useApi({url: "api/messages/delete", method: "post"})

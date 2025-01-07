@@ -1,12 +1,12 @@
 import { createSharedComposable } from "@vueuse/core";
 import { ref } from "vue";
-import { useSharedUsername } from "./useSharedUsername";
+import { useUserData } from "./useUserData";
 import { useWebstomp } from "./useWebstomp";
 import { useApi } from "./useApi";
 import { useConvertChat } from "./useConvertChat";
 
 export const useSharedChats = createSharedComposable(() => {
-    const { username } = useSharedUsername();
+    const { state:userDataState } = useUserData();
     const currentChat = ref();
     let chats = ref([]);
 
@@ -22,7 +22,7 @@ export const useSharedChats = createSharedComposable(() => {
         console.log(error);
     });
 
-    const chatsWebStomp = useWebstomp(`/topic/user/chats/${username.value}`);
+    const chatsWebStomp = useWebstomp(`/topic/user/chats/${userDataState.value.username}`);
     chatsWebStomp.emitter.on('wsMessage', (message) =>  {
         const jsonMessage = JSON.parse(message.body);
         chats.value.push(useConvertChat(jsonMessage));

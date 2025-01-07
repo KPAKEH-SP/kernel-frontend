@@ -1,12 +1,12 @@
 import { getAvatar } from "@/utils/users/avatars/GetAvatars";
-import { useSharedUsername } from "./useSharedUsername";
+import { useUserData } from "./useUserData";
 
 export const useConvertFriendResponse = (friendsResponse) => {
-    const { username } = useSharedUsername();
+    const { state:userDataState } = useUserData();
     let convertedFriends = [];
     
     for (const friend of friendsResponse) {
-        if (friend.user.username === username.value){
+        if (friend.user.username === userDataState.value.username){
             const avatar = getAvatar(friend.pendingFrom.username);
             convertedFriends.push({
                 avatar: avatar, 

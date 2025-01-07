@@ -30,7 +30,7 @@
     <div v-if="openedRequestsList" :class="$style.list">
         <div v-for="friend in friends" :key="friend.id">
             <FriendCard v-if="friend.status == 'PENDING'" :username="friend.username">
-                <PhCheck v-if="friend.pendingFrom != username" @click="acceptFriend(friend.username)" :class="$style['blue-icon']" :size="30"/>
+                <PhCheck v-if="friend.pendingFrom != userDataState.username" @click="acceptFriend(friend.username)" :class="$style['blue-icon']" :size="30"/>
                 <PhSpinnerGap :class="$style.loading" v-else/>
                 <PhX @click="removeFriend(friend.username)" :class="$style['red-icon']" :size="30"/>
             </FriendCard>
@@ -43,14 +43,14 @@
     import PrimaryButton from './ui/PrimaryButton.vue';
     import FriendCard from './ui/FriendCard.vue';
     import { PhChatCircleDots, PhCheck, PhSpinnerGap, PhTrash, PhUserPlus, PhX } from '@phosphor-icons/vue';
-    import { useSharedUsername } from '@/composables/useSharedUsername';
+    import { useUserData } from '@/composables/useUserData';
     import { useFriendApi } from '@/composables/useFriendApi';
     import { useConvertFriendResponse } from '@/composables/useConvertFriendResponse';
     import { useApi } from '@/composables/useApi';
     import { useWebstomp } from '@/composables/useWebstomp';
     import { useSharedChats } from '@/composables/useSharedChats';
 
-    const { username } = useSharedUsername();
+    const { state:userDataState } = useUserData();
     const friends = ref([]);
     const addedFriendName = ref('');
     const openedFriendsList = ref(true);
@@ -65,7 +65,7 @@
                 console.log(error);
             });
 
-        const friendsWebSocket = useWebstomp(`/topic/requests/friend/${username.value}`);
+        const friendsWebSocket = useWebstomp(`/topic/requests/friend/${userDataState.value.username}`);
             friendsWebSocket.emitter.on('wsMessage', (message) =>  {
             const jsonMessage = JSON.parse(message.body);
             friends.value = useConvertFriendResponse(jsonMessage);

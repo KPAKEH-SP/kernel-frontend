@@ -1,10 +1,8 @@
 import { useApi } from "./useApi";
 import { useConvertFriendResponse } from "./useConvertFriendResponse";
-import { useSharedUsername } from "./useSharedUsername";
+import { useUserData } from "./useUserData";
 
 export const useFriendApi = (action, friendUsername) => {
-    const { username } = useSharedUsername();
-
     const removeFriendApi = useApi({url: `api/friends/${ action }`, method: "post"});
         removeFriendApi.execute(0, {data: {username: friendUsername}})
         .then(function(response) {

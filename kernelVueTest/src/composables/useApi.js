@@ -14,5 +14,5 @@ export const useApi = (params = {}, asyncOptions) => {
         .then(t => t.data)
     },
     undefined,
-    {immediate: false, throwError: true, ...asyncOptions});
+    {immediate: false, throwError: true, resetOnExecute: true, ...asyncOptions});
 };

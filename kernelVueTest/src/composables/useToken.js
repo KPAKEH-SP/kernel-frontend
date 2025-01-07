@@ -1,9 +1,9 @@
-import { useLocalStorage } from "@vueuse/core"
+import { createSharedComposable, useLocalStorage } from "@vueuse/core"
 
-export const useToken = () => {
+export const useToken = createSharedComposable(() => {
     return useLocalStorage(
         "token",
         undefined,
         { deep:false }
     )
-}
+});

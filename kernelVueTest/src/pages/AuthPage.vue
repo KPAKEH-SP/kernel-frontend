@@ -7,6 +7,7 @@
     import FormSwitcherArrow from '@/components/ui/FormSwitcher.vue';
     import PasswordInput from '@/components/ui/PasswordInput.vue';
     import { useApi } from '@/composables/useApi';
+import { useToken } from '@/composables/useToken';
 
     const error = ref('');
     const regUsername = ref('');
@@ -23,6 +24,7 @@
     const regErrorShowed = ref(false);
 
     const userInfoApi = useApi({url: "api/auth/user-info", method: "get"})
+    const token = useToken();
 
     const userInfo = () => {
         var storageToken = localStorage.getItem('token');
@@ -133,7 +135,7 @@
     const login = () => {
         loginApi.execute(0, {data: {username: loginUsername.value, password: loginPassword.value}})
         .then(function(response) {
-            localStorage.setItem("token", response.token);
+            token.value = response.token;
             router.push({path: '/'});
         })
         .catch(function (error) {
