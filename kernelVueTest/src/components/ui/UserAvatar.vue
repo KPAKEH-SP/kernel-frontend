@@ -25,7 +25,7 @@
         align-items: center;
         height: 100px;
         width: 100px;
-        border: solid #fff;
+        border: solid #fff 1px;
         border-radius: 50%;
         box-sizing: border-box;
         background: transparent;

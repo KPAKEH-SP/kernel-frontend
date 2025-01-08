@@ -1,6 +1,7 @@
 <template>
     <Modal v-model:open="openedAudioChat">
-        <AudioChat/>
+        <AudioChat
+        @disconnected="openedAudioChat = false"/>
     </Modal>
 
     <BaseWidget :class="$style['chat-window']">
@@ -17,7 +18,6 @@
 </template>
 
 <script setup>
-    import { useWebRTC } from '@/composables/useWebRTC';
     import AudioChat from './AudioChat.vue';
     import BaseWidget from './ui/BaseWidget.vue';
     import Modal from './ui/Modal.vue';

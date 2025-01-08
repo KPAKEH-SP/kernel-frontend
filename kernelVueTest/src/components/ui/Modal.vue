@@ -54,7 +54,7 @@ watch(isOpen, (isOpenValue) => {
 
     width: max-content;
     height: max-content;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
     border: 1px solid #00ffff;
     box-shadow: #00ffff 0 0 7px;
     border-radius: 35px;
@@ -70,13 +70,15 @@ watch(isOpen, (isOpenValue) => {
 }
 
 .dialog::backdrop {
-    background-color: hsla(var(--backdrop-bg-hsl), .9);
+    background-color: hsla(var(--backdrop-bg-hsl), .5);
     background-image: var(--backdrop-bg-img);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     transition: display var(--transition-duration) allow-discrete, overlay var(--transition-duration) allow-discrete;
     animation: ui-base-dialog-backdrop-close var(--transition-duration) forwards;
+
+    backdrop-filter: blur(10px);
 }
 .dialog[open]::backdrop {
   animation: ui-base-dialog-backdrop-open var(--transition-duration) forwards;

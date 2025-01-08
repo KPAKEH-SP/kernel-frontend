@@ -12,10 +12,12 @@
     import CallWindow from '@/components/CallWindow.vue';
     import { useSharedChats } from '@/composables/useSharedChats';
     import { useToken } from '@/composables/useToken';
+    import { useCallData } from '@/composables/useCallData';
     
     const { state:userDataState } = useUserData();
     const { stompClient } = useSharedWebStomp();
-    const { setCurrentChat } = useSharedChats(); 
+    const { currentChat, setCurrentChat } = useSharedChats(); 
+    const { callInterlocutor } = useCallData();
     const token = useToken();
 
     const openedAccountPanel = ref(false);
@@ -56,22 +58,20 @@
     });
     
     stompClient.subscribe(`/topic/user/call/accept/${userDataState.value.username}`, message => {
+        callInterlocutor.value = currentChat.value.chatName;
         createOffer();
     });
 
     stompClient.subscribe(`/topic/user/call/reject/${userDataState.value.usernamee}`, message => {
         disconnect();
     });
-    const connectToWebSocket = () => {
-        stompClient.subscribe(`/topic/notifications/${userDataState.value.username}`, (message) => {
-            const text = message.body;
-            const notification = new Notification("Kernel", { body: text });
-        });
 
-        return stompClient;
-    }
+    stompClient.subscribe(`/topic/notifications/${userDataState.value.username}`, (message) => {
+        const text = message.body;
+        const notification = new Notification("Kernel", { body: text });
+    });
 
-    connectToWebSocket();
+
 
     const acceptCall = () => {
         setCurrentChat(currentCallRequest.value.chatId);
@@ -83,6 +83,7 @@
             type: "ACCEPT"
         };
         stompClient.send(`/kernel/user/call`, JSON.stringify(payload));
+        callInterlocutor.value = currentCallRequest.value.senderUsername;
         openedCallWindow.value = false;
     }
 

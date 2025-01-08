@@ -121,8 +121,8 @@ import { useToken } from '@/composables/useToken';
 
         registerApi.execute(0, {data: { username: regUsername.value, email: regEmail.value, password: regPassword.value}})
         .then(function (response) {
-            localStorage.setItem("token", response);
-            userInfo();
+            token.value = response;
+            router.push({path: '/'});
         })
         .catch(function (serverError) {
             console.log(serverError.response.message);
