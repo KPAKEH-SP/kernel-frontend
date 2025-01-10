@@ -58,7 +58,7 @@
     });
     
     stompClient.subscribe(`/topic/user/call/accept/${userDataState.value.username}`, message => {
-        callInterlocutor.value = currentChat.value.chatName;
+        callInterlocutor.value = currentChat.value.chatInfo.companion;
         createOffer();
     });
 

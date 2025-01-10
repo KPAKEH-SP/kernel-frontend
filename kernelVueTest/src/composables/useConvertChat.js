@@ -7,7 +7,22 @@ export const useConvertChat = (chat) => {
         for (const user of chat.users) {
             if (user.username != userDataState.value.username) {
                 const avatar = getAvatar(user.username);
-                return { chatAvatar: avatar, chatName: user.username, chatInfo: chat };
+                return { 
+                    type:"personal", 
+                    chatInfo: {
+                        companion: user.username,
+                        chatId: chat.chatId,
+                        chatAvatar: avatar, 
+                    }};
+            }
+        }
+    } else {
+        return {
+            type:"group",
+            chatInfo: {
+                users: chat.users,
+                chatId: chat.chatId,
+                chatName: chat.chatName
             }
         }
     }

@@ -16,30 +16,17 @@ export const useWebRTC = createSharedComposable(() => {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' }
         ]
-    });  // Инициализация соединения сразу
+    });
 
     let pendingCandidates = [];
 
-    // Запрашиваем только аудио
     navigator.mediaDevices.getUserMedia({
         audio: true,
-        video: false  // Отключаем видео
     })
     .then(stream => {
         localStream.value = stream;
         console.log("Local audio stream acquired.");
-        // Добавляем только аудио треки в PeerConnection
         stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
-
-        // Проверка состояния локальных потоков
-        if (localStream.value.getAudioTracks().length > 0) {
-            console.log("Local audio is active.");
-        } else {
-            console.log("No local audio found.");
-        }
-    })
-    .catch(error => {
-        console.error("Error accessing media devices:", error);
     });
 
     const handleOffer = async (message) => {
@@ -152,7 +139,6 @@ export const useWebRTC = createSharedComposable(() => {
             }
         });
 
-        // Проверка полученного аудио
         if (remoteStream.value.getAudioTracks().length > 0) {
             console.log("Remote audio is active.");
         } else {
@@ -164,7 +150,6 @@ export const useWebRTC = createSharedComposable(() => {
         if (peerConnection.connectionState === "connected") {
             console.log("WebRTC connection established successfully!");
 
-            // Проверка содержимого remoteStream
             if (remoteStream.value && remoteStream.value.active) {
                 console.log("Remote audio stream is active!");
                 console.log("Remote audio stream tracks: ", remoteStream.value.getTracks());
@@ -175,15 +160,12 @@ export const useWebRTC = createSharedComposable(() => {
             console.log("WebRTC connection state:", peerConnection.connectionState);
         }
 
-        // Вывод информации о remoteStream
         console.log("Remote Stream: ", remoteStream.value);
     }
 
-    // Метод для отключения пользователя от чата
     const disconnect = () => {
         console.log("Disconnecting from chat...");
 
-        // Отключение и остановка всех треков
         if (localStream.value) {
             localStream.value.getTracks().forEach(track => track.stop());
             localStream.value = null;
@@ -194,10 +176,8 @@ export const useWebRTC = createSharedComposable(() => {
             remoteStream.value = null;
         }
 
-        // Закрытие соединения PeerConnection
         peerConnection.close();
 
-        // Создаем новое соединение для следующего звонка
         console.log("Disconnected from chat.");
     }
 

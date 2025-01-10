@@ -48,7 +48,6 @@
     import { useConvertFriendResponse } from '@/composables/useConvertFriendResponse';
     import { useApi } from '@/composables/useApi';
     import { useWebstomp } from '@/composables/useWebstomp';
-    import { useSharedChats } from '@/composables/useSharedChats';
 
     const { state:userDataState } = useUserData();
     const friends = ref([]);
@@ -87,9 +86,6 @@
     const chatApi = useApi({url: "/api/chats/create", method: "post"});
     const createChat = (friendName) => {
         chatApi.execute(0, {data: {username: friendName}})
-        .then(function (response) {
-            useSharedChats(true);
-        })
         .catch(function (error) {
             if (error.status == 409) {
                 console.log("Chat is already created")

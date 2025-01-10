@@ -3,10 +3,14 @@
             <div :class="$style.chat" v-for="chat in chats">
                 <button :class="$style['chat-button']" @click="connectToChat(chat.chatInfo.chatId)">
                     <div :class="$style['chat-avatar']">
-                        <img :src="chat.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
+                        <img :src="chat.chatInfo.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
                     </div> 
-                    <div :class="$style['chat-name']">
-                        {{ chat.chatName }}
+                    <div v-if="chat.type == 'personal'" :class="$style['chat-name']">
+                        {{ chat.chatInfo.companion }}
+                    </div>
+
+                    <div v-if="chat.type == 'group'" :class="$style['chat-name']">
+                        {{ chat.chatInfo.chatName }}
                     </div>
                 </button>
             </div>

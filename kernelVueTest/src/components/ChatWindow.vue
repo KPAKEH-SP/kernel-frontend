@@ -6,8 +6,8 @@
 
     <BaseWidget :class="$style['chat-window']">
         <div :class="$style['chat-settings']">
-            <div> {{ currentChat.chatName }}</div>
-            <button @click="openAudioChat()"> Call </button>
+            <div> {{ chatName }}</div>
+            <PhPhoneCall :class="$style['settings-button']" @click="openAudioChat()" :size="30"/>
         </div>
         <Messages v-model:messages="messages" :chat-id="currentChat.chatInfo.chatId"/>
         <div :class="$style['message-panel']">
@@ -27,6 +27,7 @@
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
     import { useToken } from '@/composables/useToken';
+    import { PhPhoneCall } from '@phosphor-icons/vue';
 
     const { currentChat } = useSharedChats();
     const { stompClient } = useSharedWebStomp();
@@ -37,6 +38,7 @@
 
     const messages = ref([]);
     const newMessage = ref('');
+    const chatName = ref('');
 
     const storageToken = useToken();
 
@@ -69,13 +71,19 @@
         });
         
         stompClient.send(`/kernel/chat/history/${currentChat.value.chatInfo.chatId}`, {}, {});
+
+        if (currentChat.value.type == "personal") {
+            chatName.value = currentChat.value.chatInfo.companion;
+        } else if (currentChat.value.type == "group") {
+            chatName.value = currentChat.value.chatInfo.chatName;
+        }
     });
 
     const openAudioChat = () => {
         const payload = {
             chatId: currentChat.value.chatInfo.chatId,
             senderToken: storageToken.value,
-            respondentUsername: currentChat.value.chatName,
+            respondentUsername: currentChat.value.chatInfo.companion,
             type: "REQUEST"
         }; 
         stompClient.send(`/kernel/user/call`, JSON.stringify(payload));
@@ -108,9 +116,13 @@
     }
 
     .chat-settings {
+        display: flex;
+        flex-direction: column;
         width: 100%;
         height: 10vh;
         border-bottom: solid #ffffff;
+        align-items: center;
+        justify-content: center;
     }
 
     .message-panel {
@@ -178,6 +190,17 @@
         border-right: solid;
         border-bottom: solid;
         color: #00ffff;
+    }
+
+    .settings-button {
+        color: #fff;
+        transition: all 0.5s ease;
+    }
+
+    .settings-button:hover {
+        color: #00ffff;
+        filter: drop-shadow(0 0 5px #00ffff);
+        cursor: pointer;
     }
 </style>
 
