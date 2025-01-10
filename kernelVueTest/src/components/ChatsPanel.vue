@@ -1,5 +1,8 @@
 <template>
         <div :class="$style['chats-panel']">
+            <div :class="$style['chats-options']">
+                <PhPlus :class="$style['options-button']" :size="30"/>
+            </div>
             <div :class="$style.chat" v-for="chat in chats">
                 <button :class="$style['chat-button']" @click="connectToChat(chat.chatInfo.chatId)">
                     <div :class="$style['chat-avatar']">
@@ -19,6 +22,7 @@
 
 <script setup>
     import { useSharedChats } from '@/composables/useSharedChats';
+    import { PhPlus } from '@phosphor-icons/vue';
 
     const emit = defineEmits(["connectToChat"]);
     const { chats, setCurrentChat } = useSharedChats();
@@ -53,6 +57,9 @@
 
     .chat-button {
         display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         flex-grow: 1;
         background: transparent;
         border: solid #fff 1px;
@@ -80,7 +87,27 @@
     }
 
     .chat-name {
-        margin-left: 5%;
         align-self: center;
+    }
+
+    .chats-options {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: solid #fff 1px;
+        margin: 1vh;
+        width: 95%;
+        border-radius: 10vh;
+    }
+
+    .options-button {
+        color: #fff;
+        transition: all 0.5s ease;
+    }
+
+    .options-button:hover {
+        color: #00ffff;
+        filter: drop-shadow(0 0 5px #00ffff);
+        cursor: pointer;
     }
 </style>
