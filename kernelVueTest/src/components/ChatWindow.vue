@@ -1,9 +1,4 @@
 <template>
-    <Modal v-model:open="openedAudioChat">
-        <AudioChat
-        @disconnected="openedAudioChat = false"/>
-    </Modal>
-
     <BaseWidget :class="$style['chat-window']">
         <div :class="$style['chat-settings']">
             <div> {{ chatName }}</div>
@@ -81,12 +76,10 @@
 
     const openAudioChat = () => {
         const payload = {
-            chatId: currentChat.value.chatInfo.chatId,
-            senderToken: storageToken.value,
-            respondentUsername: currentChat.value.chatInfo.companion,
+            sender: storageToken.value,
             type: "REQUEST"
         }; 
-        stompClient.send(`/kernel/user/call`, JSON.stringify(payload));
+        stompClient.send(`/kernel/call/user/${currentChat.value.chatInfo.companion}`, JSON.stringify(payload));
 
         openedAudioChat.value = true;
     }
