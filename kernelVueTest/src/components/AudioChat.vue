@@ -11,7 +11,7 @@
       <audio ref="remoteAudio" autoplay></audio>
     </div>
     <div :class="$style['bottom-panel']">
-        <PhPhoneX @click="emits('disconnected')" :size="40" :class="$style['bottom-button']"/>
+        <PhPhoneX @click="disconnect" :size="40" :class="$style['bottom-button']"/>
     </div>
   </div>
 </template>
@@ -33,7 +33,7 @@
   const friendConnected = ref(false);
   const {state:userDataState} = useUserData();
   const { callInterlocutor } = useCallData(); 
-  const emits = defineEmits(['disconnected'])
+  const { disconnect:disconnectWebRTC } = useWebRTC();
 
   onMounted(() => {  
     // Устанавливаем локальный поток в аудио элемент
@@ -52,6 +52,10 @@
       }
     });
   });
+
+  const disconnect = () => {
+    disconnectWebRTC();
+  }
 </script>
 
 <style module>
