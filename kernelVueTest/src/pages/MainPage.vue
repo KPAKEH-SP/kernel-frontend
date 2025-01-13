@@ -14,6 +14,7 @@
     import { useToken } from '@/composables/useToken';
     import { useCallData } from '@/composables/useCallData';
     import AudioChat from '@/components/AudioChat.vue';
+import CreateGroupChat from '@/components/CreateGroupChat.vue';
     
     const { state:userDataState } = useUserData();
     const { stompClient } = useSharedWebStomp();
@@ -27,6 +28,7 @@
     const openedChatWindow = ref(false);
     const openedAudioChat = ref(false);
     const openedCallWindow = ref(false);
+    const openedCreateGroupChat = ref(false);
 
     const currentCallRequest = ref(null);
 
@@ -118,6 +120,10 @@
         <AudioChat/>
     </Modal>
 
+    <Modal v-model:open="openedCreateGroupChat">
+        <CreateGroupChat/>
+    </Modal>
+
     <div class="main-container">
         <UpMenu v-model:openedAccountPanel="openedAccountPanel"
         v-model:openedFriendsPanel="openedFriendsPanel"
@@ -128,6 +134,7 @@
                 <ChatsPanel 
                 v-if="openedChatsPanel"
                 @connectToChat="openedChatWindow = true"
+                v-model:openedCreateGroupChat="openedCreateGroupChat"
                 class="chats-panel"/>
             </Transition>
             <ChatWindow 

@@ -1,32 +1,33 @@
 <template>
-        <div :class="$style['chats-panel']">
-            <div :class="$style['chats-options']">
-                <PhPlus :class="$style['options-button']" :size="30"/>
-            </div>
-            <div :class="$style.chat" v-for="chat in chats">
-                <button :class="$style['chat-button']" @click="connectToChat(chat.chatInfo.chatId)">
-                    <div :class="$style['chat-avatar']">
-                        <img :src="chat.chatInfo.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
-                    </div> 
-                    <div v-if="chat.type == 'personal'" :class="$style['chat-name']">
-                        {{ chat.chatInfo.companion }}
-                    </div>
-
-                    <div v-if="chat.type == 'group'" :class="$style['chat-name']">
-                        {{ chat.chatInfo.chatName }}
-                    </div>
-                </button>
-            </div>
+    <div :class="$style['chats-panel']">
+        <div :class="$style['chats-options']">
+            <PhPlus @click="openedCreateGroupChat = true" :class="$style['options-button']" :size="30"/>
         </div>
+        <div :class="$style.chat" v-for="chat in chats">
+            <button :class="$style['chat-button']" @click="connectToChat(chat.chatInfo.chatId)">
+                <div :class="$style['chat-avatar']">
+                    <img :src="chat.chatInfo.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
+                </div> 
+                <div v-if="chat.type == 'personal'" :class="$style['chat-name']">
+                    {{ chat.chatInfo.companion }}
+                </div>
+
+                <div v-if="chat.type == 'group'" :class="$style['chat-name']">
+                    {{ chat.chatInfo.chatName }}
+                </div>
+            </button>
+        </div>
+    </div>
 </template>
 
 <script setup>
     import { useSharedChats } from '@/composables/useSharedChats';
     import { PhPlus } from '@phosphor-icons/vue';
+    import { ref } from 'vue';
 
     const emit = defineEmits(["connectToChat"]);
     const { chats, setCurrentChat } = useSharedChats();
-
+    const openedCreateGroupChat = defineModel('openedCreateGroupChat', {type: Boolean, default: false});
     const connectToChat = (chatId) => {
         emit('connectToChat');
         setCurrentChat(chatId);
