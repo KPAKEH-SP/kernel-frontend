@@ -77,6 +77,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        width: 35vw;
+        height: 35vh;
     }
 
     .avatar {

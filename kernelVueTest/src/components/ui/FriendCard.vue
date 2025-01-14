@@ -1,5 +1,4 @@
 <script setup>
-  import { getAvatar } from '@/utils/users/avatars/GetAvatars';
   import { ref } from 'vue';
   import UserAvatar from './UserAvatar.vue';
 
@@ -95,13 +94,13 @@
   }
   
   .card-front {
-    background-color: #000;
+    background-color: rgb(0, 0, 0, 0.3);
     border: solid #fff 3px;
     border-radius: 1vh;
   }
   
   .card-back {
-    background-color: #000;
+    background-color: rgb(0, 0, 0, 0.3);
     border: solid #00ffff 3px;
     border-radius: 1vh;
     box-shadow: #00ffff 0 0 10px, inset #00ffff 0 0 10px;

@@ -1,39 +1,41 @@
 <template>
-    <div :class="$style['input-panel']">
-        <input v-model="addedFriendName" type="text" name="username" placeholder="friend username" autocomplete="off">
-            <PhUserPlus :class="$style['add-friend']" :size="30" @click="addFriend()"/>
-        </input>
-    </div>
-
-    <div :class="$style.pages">
-        <PrimaryButton @click="openedFriendsList = true, openedRequestsList = false" 
-        text="friends" 
-        size="" 
-        color="" 
-        :class="{[$style['active-page']]: openedFriendsList === true}"/>
-        <PrimaryButton @click="openedRequestsList = true, openedFriendsList = false" 
-        text="requests" 
-        size="" 
-        color="" 
-        :class="{[$style['active-page']]: openedRequestsList === true}"/>    
-    </div>
-
-    <div v-if="openedFriendsList" :class="$style.list">
-        <div v-for="friend in friends" :key="friend.id">
-            <FriendCard v-if="friend.status == 'ACCEPTED'" :username="friend.username">
-                <PhChatCircleDots :class="$style['blue-icon']" @click="createChat(friend.username)" :size="30"/>
-                <PhTrash :class="$style['red-icon']" :size="30" @click="removeFriend(friend.username)"/>
-            </FriendCard>
+    <div :class="$style.wrapper">
+        <div :class="$style['input-panel']">
+            <input v-model="addedFriendName" type="text" name="username" placeholder="friend username" autocomplete="off">
+                <PhUserPlus :class="$style['add-friend']" :size="30" @click="addFriend()"/>
+            </input>
         </div>
-    </div>
 
-    <div v-if="openedRequestsList" :class="$style.list">
-        <div v-for="friend in friends" :key="friend.id">
-            <FriendCard v-if="friend.status == 'PENDING'" :username="friend.username">
-                <PhCheck v-if="friend.pendingFrom != userDataState.username" @click="acceptFriend(friend.username)" :class="$style['blue-icon']" :size="30"/>
-                <PhSpinnerGap :class="$style.loading" v-else/>
-                <PhX @click="removeFriend(friend.username)" :class="$style['red-icon']" :size="30"/>
-            </FriendCard>
+        <div :class="$style.pages">
+            <PrimaryButton @click="openedFriendsList = true, openedRequestsList = false" 
+            text="friends" 
+            size="" 
+            color="" 
+            :class="{[$style['active-page']]: openedFriendsList === true}"/>
+            <PrimaryButton @click="openedRequestsList = true, openedFriendsList = false" 
+            text="requests" 
+            size="" 
+            color="" 
+            :class="{[$style['active-page']]: openedRequestsList === true}"/>    
+        </div>
+
+        <div v-if="openedFriendsList" :class="$style.list">
+            <div v-for="friend in friends" :key="friend.id">
+                <FriendCard v-if="friend.status == 'ACCEPTED'" :username="friend.username">
+                    <PhChatCircleDots :class="$style['blue-icon']" @click="createChat(friend.username)" :size="30"/>
+                    <PhTrash :class="$style['red-icon']" :size="30" @click="removeFriend(friend.username)"/>
+                </FriendCard>
+            </div>
+        </div>
+
+        <div v-if="openedRequestsList" :class="$style.list">
+            <div v-for="friend in friends" :key="friend.id">
+                <FriendCard v-if="friend.status == 'PENDING'" :username="friend.username">
+                    <PhCheck v-if="friend.pendingFrom != userDataState.username" @click="acceptFriend(friend.username)" :class="$style['blue-icon']" :size="30"/>
+                    <PhSpinnerGap :class="$style.loading" v-else/>
+                    <PhX @click="removeFriend(friend.username)" :class="$style['red-icon']" :size="30"/>
+                </FriendCard>
+            </div>
         </div>
     </div>
 </template>
@@ -191,11 +193,16 @@
     }
 
     @keyframes spin {
-    0% {
-      transform: rotate(0);
+        0% {
+        transform: rotate(0);
+        }
+        100% {
+        transform: rotate(360deg);
+        }
     }
-    100% {
-      transform: rotate(360deg);
+
+    .wrapper {
+        width: 50vw;
+        height: 50vh;
     }
-  }
 </style>
