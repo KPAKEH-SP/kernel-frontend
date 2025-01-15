@@ -113,6 +113,7 @@
         scrollbar-width: none;
         flex-grow: 1;
         flex-wrap: wrap;
+        overflow: scroll;
     }
 
     .pages {
@@ -202,7 +203,9 @@
     }
 
     .wrapper {
+        display: flex;
         width: 50vw;
         height: 50vh;
+        flex-direction: column;
     }
 </style>

@@ -1,22 +1,24 @@
 <template>
     <div :class="$style['chats-panel']">
-        <div :class="$style['chats-options']">
-            <PhPlus @click="openedCreateGroupChat = true" :class="$style['options-button']" :size="30"/>
-        </div>
-        <div :class="$style.chat" v-for="chat in chats">
-            <button :class="$style['chat-button']" @click="connectToChat(chat.chatInfo.chatId)">
-                <div :class="$style['chat-avatar']">
-                    <img :src="chat.chatInfo.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
-                </div> 
-                <div v-if="chat.type == 'personal'" :class="$style['chat-name']">
-                    {{ chat.chatInfo.companion }}
-                </div>
+        <BaseWidget>
+            <div :class="$style['chats-options']">
+                <PhPlus @click="openedCreateGroupChat = true" :class="$style['options-button']" :size="30"/>
+            </div>
+            <div :class="$style.chat" v-for="chat in chats">
+                <button :class="$style['chat-button']" @click="connectToChat(chat.chatInfo.chatId)">
+                    <div :class="$style['chat-avatar']">
+                        <img :src="chat.chatInfo.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
+                    </div> 
+                    <div v-if="chat.type == 'personal'" :class="$style['chat-name']">
+                        {{ chat.chatInfo.companion }}
+                    </div>
 
-                <div v-if="chat.type == 'group'" :class="$style['chat-name']">
-                    {{ chat.chatInfo.chatName }}
-                </div>
-            </button>
-        </div>
+                    <div v-if="chat.type == 'group'" :class="$style['chat-name']">
+                        {{ chat.chatInfo.chatName }}
+                    </div>
+                </button>
+            </div>
+        </BaseWidget>
     </div>
 </template>
 
@@ -24,6 +26,7 @@
     import { useSharedChats } from '@/composables/useSharedChats';
     import { PhPlus } from '@phosphor-icons/vue';
     import { ref } from 'vue';
+    import BaseWidget from './ui/BaseWidget.vue';
 
     const emit = defineEmits(["connectToChat"]);
     const { chats, setCurrentChat } = useSharedChats();
@@ -37,17 +40,13 @@
 <style module>
     .chats-panel {
         width: 15%;
-        border: 1px solid #fff;
         display: flex;
         flex-direction: column;
         align-items: center;
         overflow: hidden;
         z-index: 10;
-        background-color: rgba(0, 0, 0, 0.8);
         margin: 10px;
-        margin-top: 5px;
         margin-right: 5px;
-        border-radius: 3vh;
     }
 
     .chat {

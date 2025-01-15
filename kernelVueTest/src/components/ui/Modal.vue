@@ -54,7 +54,7 @@ watch(isOpen, (isOpenValue) => {
 
     width: max-content;
     height: max-content;
-    background-color: rgba(0, 0, 0, 0.3);
+    background: radial-gradient(ellipse at right top, rgba(0, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0.3) 47%, rgba(0, 0, 0, 0.3) 100%);
     border: 1px solid #00ffff;
     box-shadow: #00ffff 0 0 7px;
     border-radius: 35px;

@@ -97,13 +97,19 @@
         display: flex;
         flex-direction: row;
         
+        align-items: center;
+        justify-content: center;
+        
         border: solid #fff 1px;
-        border-radius: 3vh;
+        border-radius: 2vh;
 
         margin-top: 5px;
 
         overflow-y: auto;
         scrollbar-width: none;
+
+        scrollbar-width: none;
+        overflow: scroll;
     }
 
     .card-button {

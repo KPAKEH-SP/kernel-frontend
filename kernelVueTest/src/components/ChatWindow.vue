@@ -104,7 +104,6 @@
         width: 100%;
         flex-direction: column;
         margin: 10px;
-        margin-top: 5px;
         margin-left: 5px;
     }
 

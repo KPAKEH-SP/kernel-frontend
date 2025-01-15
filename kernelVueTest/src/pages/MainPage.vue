@@ -137,9 +137,11 @@ import CreateGroupChat from '@/components/CreateGroupChat.vue';
                 v-model:openedCreateGroupChat="openedCreateGroupChat"
                 class="chats-panel"/>
             </Transition>
-            <ChatWindow 
-            v-if="openedChatWindow"
-            v-model:openedAudioChat="openedAudioChat"/>
+            <Transition name="chat-window">
+                <ChatWindow 
+                v-if="openedChatWindow"
+                v-model:openedAudioChat="openedAudioChat"/>
+            </Transition>
         </div>
     </div>
 </template>

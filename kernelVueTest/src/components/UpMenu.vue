@@ -33,24 +33,26 @@
 
 <style module>
     .up-menu {
-        position: relative;
+        position: absolute;
+        width: calc(100% - 20px);
         display: flex;
         justify-content: center;
         align-items: center;
         border: 0px solid #fff;
         height: 0px;
         transition: all 0.5s ease;
-        box-sizing: border-box;
-        z-index: 5;
+        z-index: 15;
         background-color: rgba(0, 0, 0, 0.8);
-        margin: 10px;
-        margin-bottom: 5px;
         border-radius: 3vh;
+        left: 10px;
+        top: 10px;
+        opacity: 0;
     }
 
     .up-menu:hover {
         border: 1px solid #fff;
         height: 5vh;
+        opacity: 1;
     }
 
     .up-menu:hover .account-button {

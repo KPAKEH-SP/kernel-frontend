@@ -77,6 +77,7 @@
         position: relative;
         display: flex;
         align-items: center;
+        flex-shrink: 0;
     }
 
     .avatar-image {
