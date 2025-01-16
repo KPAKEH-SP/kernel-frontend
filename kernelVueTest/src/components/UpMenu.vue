@@ -4,6 +4,7 @@
         <PhUsers @click="friendsPanelIsOpened = true" :class="$style['up-item']" :size="40"/>
         <NotificationsButton/>
         <div :class="$style['account-button']">
+            
             <div :class="$style['avatar-wrapper']">
                 <img :src="getAvatar(userDataState.username, true)" onerror="this.style.display='none';" class="avatar-image"/>
             </div>

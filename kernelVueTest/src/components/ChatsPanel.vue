@@ -6,15 +6,22 @@
             </div>
             <div :class="$style.chat" v-for="chat in chats">
                 <button :class="$style['chat-button']" @click="connectToChat(chat.chatInfo.chatId)">
-                    <div :class="$style['chat-avatar']">
-                        <img :src="chat.chatInfo.chatAvatar" class="avatar-image" onerror="this.style.display='none';"/>
-                    </div> 
-                    <div v-if="chat.type == 'personal'" :class="$style['chat-name']">
-                        {{ chat.chatInfo.companion }}
+                    <div v-if="chat.type == 'personal'">
+                        <UserAvatar :class="$style['avatar-wrapper']" :username="chat.chatInfo.companion"/>
+                        <div :class="$style['chat-name']">
+                            {{ chat.chatInfo.companion }}
+                        </div>
                     </div>
-
-                    <div v-if="chat.type == 'group'" :class="$style['chat-name']">
-                        {{ chat.chatInfo.chatName }}
+                    
+                    <div v-if="chat.type == 'group'">
+                        <div :class="$style['group-chat-avatar']">
+                            <UserAvatar :class="$style['avatar-wrapper']" :username="chat.chatInfo.users[0].username"/>
+                            <UserAvatar :class="$style['group-avatar-wrapper']" :username="chat.chatInfo.users[1].username"/>
+                            <UserAvatar :class="$style['group-avatar-wrapper']" :username="chat.chatInfo.users[2].username"/>
+                        </div>
+                        <div :class="$style['chat-name']">
+                            {{ chat.chatInfo.chatName }}
+                        </div>
                     </div>
                 </button>
             </div>
@@ -25,8 +32,8 @@
 <script setup>
     import { useSharedChats } from '@/composables/useSharedChats';
     import { PhPlus } from '@phosphor-icons/vue';
-    import { ref } from 'vue';
     import BaseWidget from './ui/BaseWidget.vue';
+    import UserAvatar from './ui/UserAvatar.vue';
 
     const emit = defineEmits(["connectToChat"]);
     const { chats, setCurrentChat } = useSharedChats();
@@ -74,16 +81,8 @@
         color: #00ffff;
     }
 
-    .chat-avatar {
-        height: 50px;
-        width: 50px;
-        border: solid #fff 1px;
-        border-radius: 50%;
-        justify-content: center;
-        align-items: center;
-        position: relative;
+    .group-chat-avatar {
         display: flex;
-        align-items: center;
     }
 
     .chat-name {
@@ -109,5 +108,18 @@
         color: #00ffff;
         filter: drop-shadow(0 0 5px #00ffff);
         cursor: pointer;
+    }
+
+    .avatar-wrapper {
+        height: 50px;
+        width: 50px;
+        z-index: 10;
+    }
+
+    .group-avatar-wrapper {
+        height: 50px;
+        width: 50px;
+        margin-left: -10px;
+        z-index: 5;
     }
 </style>

@@ -1,6 +1,7 @@
 <template>
     <div :class="$style.avatar">
         <img :src="getAvatar(props.username)" :class="$style['avatar-image']" onerror="this.style.display='none';"/>
+        {{ props.username }}
         <div v-if="isOpened" :class="$style['spinning-circles']">
             <div :class="$style['spinning-circle']"></div>
             <div :class="$style['spinning-circle']"></div>
@@ -12,7 +13,7 @@
 
 <script setup>
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
-    const isOpened = defineModel('open', {type: Boolean, required: false, default: true});
+    const isOpened = defineModel('open', {type: Boolean, required: false, default: false});
     const props = defineProps({username:{type:String, required:true}});
 </script>
 
@@ -28,7 +29,8 @@
         border: solid #fff 1px;
         border-radius: 50%;
         box-sizing: border-box;
-        background: transparent;
+
+        background: radial-gradient(ellipse at right top, rgba(0, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0.3) 47%, rgba(0, 0, 0, 0.3) 100%);
     }
 
     .avatar-image {
