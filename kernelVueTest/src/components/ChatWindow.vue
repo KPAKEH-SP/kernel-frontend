@@ -1,8 +1,14 @@
 <template>
     <BaseWidget :class="$style['chat-window']">
         <div :class="$style['chat-settings']">
-            <div> {{ chatName }}</div>
-            <PhPhoneCall :class="$style['settings-button']" @click="openAudioChat()" :size="30"/>
+            <div v-if="currentChat.type == 'personal'">
+                <div> {{ currentChat.chatInfo.companion }}</div>
+                <PhPhoneCall :class="$style['settings-button']" @click="openAudioChat()" :size="30"/>
+            </div>
+
+            <div v-if="currentChat.type == 'group'">
+                <input v-model="chatName" :class="$style['chat-name-input']" v-on:keyup.enter="changeChatName()">
+            </div>
         </div>
         <Messages v-model:messages="messages" :chat-id="currentChat.chatInfo.chatId"/>
         <div :class="$style['message-panel']">
@@ -13,9 +19,7 @@
 </template>
 
 <script setup>
-    import AudioChat from './AudioChat.vue';
     import BaseWidget from './ui/BaseWidget.vue';
-    import Modal from './ui/Modal.vue';
     import { useSharedChats } from '@/composables/useSharedChats';
     import { onMounted, ref } from 'vue';
     import Messages from './Messages.vue';
@@ -23,6 +27,7 @@
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
     import { useToken } from '@/composables/useToken';
     import { PhPhoneCall } from '@phosphor-icons/vue';
+    import { useApi } from '@/composables/useApi';
 
     const { currentChat } = useSharedChats();
     const { stompClient } = useSharedWebStomp();
@@ -66,12 +71,6 @@
         });
         
         stompClient.send(`/kernel/chat/history/${currentChat.value.chatInfo.chatId}`, {}, {});
-
-        if (currentChat.value.type == "personal") {
-            chatName.value = currentChat.value.chatInfo.companion;
-        } else if (currentChat.value.type == "group") {
-            chatName.value = currentChat.value.chatInfo.chatName;
-        }
     });
 
     const openAudioChat = () => {
@@ -93,7 +92,23 @@
             stompClient.send(`/kernel/chat/${currentChat.value.chatInfo.chatId}`, JSON.stringify(payload));
             newMessage.value = '';
         }
-    };
+    }
+
+    const deleteMessageApi = useApi({url: "api/messages/delete", method: "post"})
+    const deleteMessage = (messageId) => {
+        deleteMessageApi.execute(0, {data: {chatId: props.chatId, messageId: messageId}})
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    const changeChatNameApi = useApi({url: "api/chats/change/name", method: "post"})
+    const changeChatName = () => {
+        changeChatNameApi.execute(0, {data: {
+            id: currentChat.value.chatInfo.chatId,
+            newChatName: chatName.value
+        }})
+    }
 </script>
 
 <style module>
@@ -123,7 +138,7 @@
         align-self: end;
     }
 
-    .message-input {
+    input {
         font-family: "Roboto Mono", monospace;
         font-optical-sizing: auto;
         font-weight: 400;
@@ -136,7 +151,6 @@
         border-color: solid #ffffff;
 
         border: none;
-        border-bottom: solid #ffffff;
         min-height: 3vh;
 
         outline: none;
@@ -148,7 +162,7 @@
         margin-right: 5px;
     }
 
-    .message-input:hover, .message-input:focus {
+    input:hover, input:focus {
         box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
         border-radius: 10vh;
         border-color: #00ffff;
@@ -165,7 +179,6 @@
         border-color: solid #ffffff;
         border-radius: 0px;
         border: none;
-        border-bottom: solid #ffffff;
         outline: none;
         text-align: center;
         transition: 0.3s ease;
