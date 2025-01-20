@@ -7,7 +7,7 @@
             </div>
 
             <div v-if="currentChat.type == 'group'">
-                <input v-model="chatName" :class="$style['chat-name-input']" v-on:keyup.enter="changeChatName()">
+                <input v-model="chatName" :class="$style['chat-name-input']" :placeholder="currentChat.chatInfo.chatName" v-on:keyup.enter="changeChatName()">
             </div>
         </div>
         <Messages v-model:messages="messages" :chat-id="currentChat.chatInfo.chatId"/>
