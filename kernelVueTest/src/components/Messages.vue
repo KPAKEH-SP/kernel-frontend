@@ -1,5 +1,9 @@
 <template>
-    <div :class="$style.messages">
+    <div :class="$style.wrapper">
+        <Message v-for="(message, index) in messages" :key="index" :class="$style.message" v-model:message="messages[index]"/>
+    </div>
+
+    <!--div :class="$style.messages">
         <div v-for="(message, index) in messages" :key="index" :class="$style.message">
             <div :class="$style['user-avatar']">
                 <img :src="message.senderAvatar" :class="$style['avatar-image']" onerror="this.style.display='none';"/>
@@ -21,13 +25,14 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div-->
 </template>
 
 <script setup>
     import { useApi } from '@/composables/useApi';
     import PrimaryButton from './ui/PrimaryButton.vue';
     import { useUserData } from '@/composables/useUserData';
+    import Message from './Message.vue';
 
     const messages = defineModel('messages', {type: Array});
     const { state:userDataState } = useUserData();
@@ -43,17 +48,27 @@
 </script>
 
 <style module>
-    .messages {
+    .wrapper {
         display: flex;
-        flex-grow: 1;
         flex-direction: column;
-        overflow-y: auto;
-        scrollbar-width: none;
+        align-items: center;
+        padding: 0px;
+        gap: 10px;
+
+        width: 100%;
     }
 
-    .messages::-webkit-scrollbar {
+    .wrapper::-webkit-scrollbar {
         display: none;
     }
+
+    /*.messages {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+
 
     .message {
         display: flex;
@@ -102,5 +117,5 @@
     .message-control {
         display: flex;
         align-items: center;
-    }
+    }*/
 </style>

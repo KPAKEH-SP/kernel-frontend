@@ -1,5 +1,20 @@
 <template>
-    <BaseWidget :class="$style['chat-window']">
+    <div :class="$style.wrapper">
+        <BaseWidget :class="$style['chat-name']">
+            <div v-if="currentChat.type == 'personal'" :class="$style['chat-name-text']">
+                {{ currentChat.chatInfo.companion }}
+            </div>
+
+            <div v-if="currentChat.type == 'group'" :class="$style['chat-name-text']">
+                {{ currentChat.chatInfo.chatName }}
+            </div>
+        </BaseWidget>
+
+        <BaseWidget :class="$style['chat-window']">
+            <Messages v-model:messages="messages" :chat-id="currentChat.chatInfo.chatId"/>
+        </BaseWidget>
+    </div>
+    <!--BaseWidget :class="$style['chat-window']">
         <div :class="$style['chat-settings']">
             <div v-if="currentChat.type == 'personal'">
                 <div> {{ currentChat.chatInfo.companion }}</div>
@@ -7,7 +22,7 @@
             </div>
 
             <div v-if="currentChat.type == 'group'">
-                <input v-model="chatName" :class="$style['chat-name-input']" :placeholder="currentChat.chatInfo.chatName" v-on:keyup.enter="changeChatName()">
+                
             </div>
         </div>
         <Messages v-model:messages="messages" :chat-id="currentChat.chatInfo.chatId"/>
@@ -15,7 +30,7 @@
             <input v-on:keyup.enter="sendMessage()" v-model="newMessage" :class="$style['message-input']" type="text" placeholder="enter message">
             <button @click="sendMessage()" :class="$style['message-button']">Send</button>
         </div>
-    </BaseWidget>
+    </BaseWidget-->
 </template>
 
 <script setup>
@@ -112,6 +127,60 @@
 </script>
 
 <style module>
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0px;
+        gap: 10px;
+
+        width: 100%;
+        height: 100%;
+    }
+
+    .chat-name {
+        box-sizing: border-box;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        gap: 10px;
+
+        width: 100%;
+        height: 60px;
+    }
+
+    .chat-name-text {
+        font-family: 'Cairo';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 20px;
+        line-height: 20px;
+        display: flex;
+        align-items: center;
+
+        color: #FFFFFF;
+    }
+
+    .chat-window {
+        box-sizing: border-box;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+        gap: 16px;
+
+        width: 100%;
+        height: 100%;
+
+        overflow-y: scroll;
+        overflow-y: auto;
+        scrollbar-width: none;
+    }
+/*
     .chat-window {
         display: flex;
         height: auto;
@@ -207,5 +276,6 @@
         filter: drop-shadow(0 0 5px #00ffff);
         cursor: pointer;
     }
+*/
 </style>
 
