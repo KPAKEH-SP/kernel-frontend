@@ -1,5 +1,5 @@
 <template>
-    <BaseWidget>
+    <BaseWidget :class="$style.widget">
         <div :class="$style.wrapper">
             <UserAvatar 
             :username="userDataState.username"
@@ -32,7 +32,6 @@
 
 <style module>
     .widget {
-        width: 100%;
         height: max-content;
     }
 
