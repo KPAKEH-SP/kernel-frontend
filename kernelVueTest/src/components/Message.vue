@@ -72,8 +72,6 @@
         font-weight: 400;
         font-size: 14px;
         line-height: 20px;
-        display: flex;
-        align-items: flex-end;
         text-align: center;
 
         color: #FFFFFF;
