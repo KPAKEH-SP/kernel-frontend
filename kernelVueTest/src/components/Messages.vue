@@ -2,30 +2,6 @@
     <div :class="$style.wrapper">
         <Message v-for="(message, index) in messages" :key="index" :class="$style.message" v-model:message="messages[index]"/>
     </div>
-
-    <!--div :class="$style.messages">
-        <div v-for="(message, index) in messages" :key="index" :class="$style.message">
-            <div :class="$style['user-avatar']">
-                <img :src="message.senderAvatar" :class="$style['avatar-image']" onerror="this.style.display='none';"/>
-            </div>
-            <div :class="$style['message-info']">
-                <div :class="$style['author-info']">
-                    {{ message.data.sender }}
-                </div>
-                <div>
-                    {{ message.data.content }}
-                </div>
-                <div :class="$style.timestamp">
-                    {{ message.data.timestamp }}
-                </div>
-            </div>
-            <div :class="$style['message-control']">
-                <div v-if="message.data.sender == userDataState.username">
-                    <PrimaryButton @click="deleteMessage(message.data.messageId)" text="del" size="" color="red"/>
-                </div>
-            </div>
-        </div>
-    </div-->
 </template>
 
 <script setup>
@@ -56,66 +32,13 @@
         gap: 10px;
 
         width: 100%;
+        height: 100%;
+        
+        overflow-y: scroll;
+        scrollbar-width: none;
     }
 
     .wrapper::-webkit-scrollbar {
         display: none;
     }
-
-    /*.messages {
-        display: flex;
-        flex-direction: column;
-
-    }
-
-
-
-    .message {
-        display: flex;
-        border: solid #fff;
-        border-radius: 2vh;
-        margin: 1%;
-        padding: 1%;
-    }
-
-    .author-info {
-        color: #959595;
-    }
-
-    .user-avatar {
-        height: 50px;
-        width: 50px;
-        border: solid #fff 1px;
-        border-radius: 50%;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-    }
-
-    .avatar-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-    }
-
-    .message-info {
-        flex-grow: 1;
-        margin-left: 1%;
-    }
-
-    .timestamp {
-        color: #555555;
-    }
-
-    .message-control {
-        display: flex;
-        align-items: center;
-    }*/
 </style>

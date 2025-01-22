@@ -12,25 +12,10 @@
 
         <BaseWidget :class="$style['chat-window']">
             <Messages v-model:messages="messages" :chat-id="currentChat.chatInfo.chatId"/>
+            <input v-on:keyup.enter="sendMessage()" v-model="newMessage" :class="$style['message-input']"
+            placeholder="Type message here..."/>
         </BaseWidget>
     </div>
-    <!--BaseWidget :class="$style['chat-window']">
-        <div :class="$style['chat-settings']">
-            <div v-if="currentChat.type == 'personal'">
-                <div> {{ currentChat.chatInfo.companion }}</div>
-                <PhPhoneCall :class="$style['settings-button']" @click="openAudioChat()" :size="30"/>
-            </div>
-
-            <div v-if="currentChat.type == 'group'">
-                
-            </div>
-        </div>
-        <Messages v-model:messages="messages" :chat-id="currentChat.chatInfo.chatId"/>
-        <div :class="$style['message-panel']">
-            <input v-on:keyup.enter="sendMessage()" v-model="newMessage" :class="$style['message-input']" type="text" placeholder="enter message">
-            <button @click="sendMessage()" :class="$style['message-button']">Send</button>
-        </div>
-    </BaseWidget-->
 </template>
 
 <script setup>
@@ -174,108 +159,33 @@
         gap: 16px;
 
         width: 100%;
-        height: 100%;
-
-        overflow-y: scroll;
-        overflow-y: auto;
-        scrollbar-width: none;
+        height: calc(100% - 60px);
     }
-/*
-    .chat-window {
-        display: flex;
-        height: auto;
+
+    .message-input {
         box-sizing: border-box;
-        width: 100%;
-        flex-direction: column;
-        margin: 10px;
-        margin-left: 5px;
-    }
 
-    .chat-settings {
         display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 10vh;
-        border-bottom: solid #ffffff;
+        flex-direction: row;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-    }
+        padding: 0px 20px;
+        gap: auto;
 
-    .message-panel {
-        width: 100%;
-        display: flex;
-        align-self: end;
-    }
-
-    input {
-        font-family: "Roboto Mono", monospace;
-        font-optical-sizing: auto;
-        font-weight: 400;
+        font-family: 'Cairo';
         font-style: normal;
-        font-size: var(--font-size);
-        line-height: var(--font-size);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 37px;
 
-        background: transparent;
-        color: #ffffff;
-        border-color: solid #ffffff;
+        color: #D8D8D8;
 
-        border: none;
-        min-height: 3vh;
+        width: 100%;
+        height: max-content;
 
-        outline: none;
-        text-align: center;
-        flex-grow: 1;
-
-        transition: 0.3s ease;        
-        margin: 10px;
-        margin-right: 5px;
+        background: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
     }
-
-    input:hover, input:focus {
-        box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
-        border-radius: 10vh;
-        border-color: #00ffff;
-        border-top: solid;
-        border-left: solid;
-        border-right: solid;
-        border-bottom: solid;
-        color: #00ffff;
-    }
-
-    .message-button {
-        background: transparent;
-        color: #ffffff;
-        border-color: solid #ffffff;
-        border-radius: 0px;
-        border: none;
-        outline: none;
-        text-align: center;
-        transition: 0.3s ease;
-        margin: 10px;
-        margin-left: 5px;
-    }
-
-    .message-button:hover {
-        box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
-        border-radius: 10vh;
-        border-color: #00ffff;
-        border-top: solid;
-        border-left: solid;
-        border-right: solid;
-        border-bottom: solid;
-        color: #00ffff;
-    }
-
-    .settings-button {
-        color: #fff;
-        transition: all 0.5s ease;
-    }
-
-    .settings-button:hover {
-        color: #00ffff;
-        filter: drop-shadow(0 0 5px #00ffff);
-        cursor: pointer;
-    }
-*/
 </style>
 
