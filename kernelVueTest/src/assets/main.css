@@ -179,7 +179,7 @@ body {
   transition: 0.3s ease;
 }
 
-.input-panel input:hover, input:focus{
+.input-panel input:hover, .input-panel input:focus{
   box-shadow: #00ffff 0 0 7px, inset #00ffff 0 0 7px;
   border-radius: 10vh;
   border-color: #00ffff;

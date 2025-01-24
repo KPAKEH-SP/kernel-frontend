@@ -12,8 +12,20 @@
 
         <BaseWidget :class="$style['chat-window']">
             <Messages v-model:messages="messages" :chat-id="currentChat.chatInfo.chatId"/>
-            <input v-on:keyup.enter="sendMessage()" v-model="newMessage" :class="$style['message-input']"
-            placeholder="Type message here..."/>
+
+            <BaseWidget :class="$style['message-input-wrapper']">
+                <input v-on:keyup.enter="sendMessage()"
+                :class="$style['message-input']"
+                v-model="newMessage"
+                placeholder="Type message here..."/>
+                <div :class="$style['message-input-buttons']">
+                    <PhSmileyWink :size="25" :class="$style['icon-button']"/>
+                    <PhMicrophone :size="25" :class="$style['icon-button']"/>
+                    <PhPaperclip :size="25" :class="$style['icon-button']"/>
+                    <PhLineVertical :size="25"/>
+                    <PhPaperPlaneTilt :size="25" :class="$style['icon-button']" @click="sendMessage()"/>
+                </div>
+            </BaseWidget>
         </BaseWidget>
     </div>
 </template>
@@ -26,7 +38,7 @@
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
     import { useToken } from '@/composables/useToken';
-    import { PhPhoneCall } from '@phosphor-icons/vue';
+    import { PhLineVertical, PhMicrophone, PhPaperclip, PhPaperPlaneTilt, PhSmileyWink } from '@phosphor-icons/vue';
     import { useApi } from '@/composables/useApi';
 
     const { currentChat } = useSharedChats();
@@ -162,7 +174,7 @@
         height: calc(100% - 60px);
     }
 
-    .message-input {
+    .message-input-wrapper {
         box-sizing: border-box;
 
         display: flex;
@@ -172,20 +184,52 @@
         padding: 0px 20px;
         gap: auto;
 
+        width: 100%;
+        height: max-content;
+    }
+
+    .message-input {
         font-family: 'Cairo';
         font-style: normal;
         font-weight: 400;
-        font-size: 14px;
-        line-height: 37px;
+        font-size: 20px;
+        line-height: 20px;
+        display: flex;
+        align-items: center;
 
-        color: #D8D8D8;
+        color: #FFFFFF;
+
+        background-color: transparent;
+        border-color: transparent;
+        outline: none;
 
         width: 100%;
         height: max-content;
+    }
 
-        background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(20px);
-        border-radius: 30px;
+    .message-input-buttons {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0px;
+        gap: 16px;
+
+        width: max-content;
+        height: max-content;
+    }
+
+    .icon-button {
+        color: #FFFFFF;
+
+        transition: all ease 0.5s;
+    }
+
+    .icon-button:hover {
+        color: #00ffff;
+
+        filter: drop-shadow(0 0 10px #00ffff);
+
+        cursor: pointer;
     }
 </style>
 

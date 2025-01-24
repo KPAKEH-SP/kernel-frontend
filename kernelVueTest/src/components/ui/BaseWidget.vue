@@ -7,11 +7,13 @@
 <style module>
     .widget {
         border: 1px solid #fff;
-        background: radial-gradient(ellipse at right top, rgba(0, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0.5) 47%, rgba(0, 0, 0, 0.5) 100%);
-        border-radius: 3vh;
+        box-sizing: border-box;
+
         width: 100%;
         height: 100%;
+
+        background: rgba(0, 0, 0, 0.25);
         backdrop-filter: blur(10px);
-        box-sizing: border-box;
+        border-radius: 30px;
     }
 </style>
