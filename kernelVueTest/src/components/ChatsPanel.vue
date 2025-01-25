@@ -16,11 +16,9 @@
 
 <script setup>
     import { useSharedChats } from '@/composables/useSharedChats';
-    import { PhPlus } from '@phosphor-icons/vue';
     import BaseWidget from './ui/BaseWidget.vue';
-    import UserAvatar from './ui/UserAvatar.vue';
-import ChatsFinder from './ChatsFinder.vue';
-import ChatButton from './ChatButton.vue';
+    import ChatsFinder from './ChatsFinder.vue';
+    import ChatButton from './ChatButton.vue';
 
     const emit = defineEmits(["connectToChat"]);
     const { chats, setCurrentChat } = useSharedChats();
