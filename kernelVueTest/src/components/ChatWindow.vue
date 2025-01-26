@@ -9,9 +9,14 @@
                 {{ currentChat.chatInfo.chatName }}
             </div>
 
-            <PhGear :class="$style['icon-button']" 
-            :size="25"
-            @click="openedChatSettings = !openedChatSettings"/>
+            <div :class="$style['chat-buttons']">
+                <PhPhone :class="$style['icon-button']"
+                :size="25"
+                @click="openAudioChat()"/>
+                <PhGear :class="$style['icon-button']" 
+                :size="25"
+                @click="openedChatSettings = !openedChatSettings"/>
+            </div>
         </BaseWidget>
 
         <BaseWidget :class="$style['chat-window']">
@@ -26,7 +31,9 @@
                     <PhSmileyWink :size="25" :class="$style['icon-button']"/>
                     <PhMicrophone :size="25" :class="$style['icon-button']"/>
                     <PhPaperclip :size="25" :class="$style['icon-button']"/>
-                    <PhLineVertical :size="25"/>
+                    <svg width="1" viewBox="0 0 1 31">
+                        <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="31" stroke="white"/>
+                    </svg>
                     <PhPaperPlaneTilt :size="25" :class="$style['icon-button']" @click="sendMessage()"/>
                 </div>
             </BaseWidget>
@@ -42,7 +49,7 @@
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
     import { useToken } from '@/composables/useToken';
-    import { PhGear, PhLineVertical, PhMicrophone, PhPaperclip, PhPaperPlaneTilt, PhSmileyWink } from '@phosphor-icons/vue';
+    import { PhGear, PhLineVertical, PhMicrophone, PhPaperclip, PhPaperPlaneTilt, PhPhone, PhSmileyWink } from '@phosphor-icons/vue';
     import { useApi } from '@/composables/useApi';
 
     const { currentChat } = useSharedChats();
@@ -235,6 +242,12 @@
         filter: drop-shadow(0 0 10px #00ffff);
 
         cursor: pointer;
+    }
+
+    .chat-buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
     }
 </style>
 

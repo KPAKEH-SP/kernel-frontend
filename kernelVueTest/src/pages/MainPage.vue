@@ -10,7 +10,6 @@
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
     import ChatWindow from '@/components/ChatWindow.vue';
     import CallWindow from '@/components/CallWindow.vue';
-    import { useSharedChats } from '@/composables/useSharedChats';
     import { useToken } from '@/composables/useToken';
     import { useCallData } from '@/composables/useCallData';
     import AudioChat from '@/components/AudioChat.vue';
