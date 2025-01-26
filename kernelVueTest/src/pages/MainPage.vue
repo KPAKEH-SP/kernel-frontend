@@ -14,11 +14,11 @@
     import { useToken } from '@/composables/useToken';
     import { useCallData } from '@/composables/useCallData';
     import AudioChat from '@/components/AudioChat.vue';
-import CreateGroupChat from '@/components/CreateGroupChat.vue';
+    import CreateGroupChat from '@/components/CreateGroupChat.vue';
+    import ChatSettings from '@/components/ChatSettings.vue';
     
     const { state:userDataState } = useUserData();
     const { stompClient } = useSharedWebStomp();
-    const { currentChat, setCurrentChat } = useSharedChats(); 
     const { callInterlocutor } = useCallData();
     const token = useToken();
 
@@ -29,6 +29,7 @@ import CreateGroupChat from '@/components/CreateGroupChat.vue';
     const openedAudioChat = ref(false);
     const openedCallWindow = ref(false);
     const openedCreateGroupChat = ref(false);
+    const openedChatSettings = ref(false);
 
     const currentCallRequest = ref(null);
 
@@ -140,7 +141,12 @@ import CreateGroupChat from '@/components/CreateGroupChat.vue';
             <Transition name="chat-window">
                 <ChatWindow 
                 v-if="openedChatWindow"
-                v-model:openedAudioChat="openedAudioChat"/>
+                v-model:openedAudioChat="openedAudioChat"
+                v-model:openedChatSettings="openedChatSettings"/>
+            </Transition>
+            <Transition name="chat-settings">
+                <ChatSettings
+                v-if="openedChatSettings"/>
             </Transition>
         </div>
     </div>

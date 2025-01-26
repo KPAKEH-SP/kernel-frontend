@@ -8,6 +8,10 @@
             <div v-if="currentChat.type == 'group'" :class="$style['chat-name-text']">
                 {{ currentChat.chatInfo.chatName }}
             </div>
+
+            <PhGear :class="$style['icon-button']" 
+            :size="25"
+            @click="openedChatSettings = !openedChatSettings"/>
         </BaseWidget>
 
         <BaseWidget :class="$style['chat-window']">
@@ -38,12 +42,13 @@
     import { getAvatar } from '@/utils/users/avatars/GetAvatars';
     import { useSharedWebStomp } from '@/composables/useSharedWebStomp';
     import { useToken } from '@/composables/useToken';
-    import { PhLineVertical, PhMicrophone, PhPaperclip, PhPaperPlaneTilt, PhSmileyWink } from '@phosphor-icons/vue';
+    import { PhGear, PhLineVertical, PhMicrophone, PhPaperclip, PhPaperPlaneTilt, PhSmileyWink } from '@phosphor-icons/vue';
     import { useApi } from '@/composables/useApi';
 
     const { currentChat } = useSharedChats();
     const { stompClient } = useSharedWebStomp();
     const openedAudioChat = defineModel('openedAudioChat', { type: Boolean });
+    const openedChatSettings = defineModel('openedChatSettings', { type: Boolean });
 
     let historySubscription = null;
     let chatSubscription = null;
@@ -139,8 +144,8 @@
         box-sizing: border-box;
 
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        flex-direction: row;
+        justify-content: space-between;
         align-items: center;
         padding: 10px;
         gap: 10px;

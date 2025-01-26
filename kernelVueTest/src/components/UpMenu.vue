@@ -47,13 +47,11 @@
         border-radius: 3vh;
         left: 10px;
         top: 10px;
-        opacity: 0;
     }
 
     .up-menu:hover {
         border: 1px solid #fff;
         height: 5vh;
-        opacity: 1;
     }
 
     .up-menu:hover .account-button {

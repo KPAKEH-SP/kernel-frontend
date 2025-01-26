@@ -219,10 +219,13 @@ body {
 }
 
 .main-container {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100vh;
+
+  padding: 10px;
 }
 
 .servers-list {
@@ -257,6 +260,11 @@ body {
 
 .main-plane {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+
   width: 100%;
   height: 100%;
 }
@@ -379,5 +387,22 @@ body {
   }
   100% {
     width: 100%;
+  }
+}
+
+.chat-settings-enter-active {
+  animation: chat-window 1s;
+}
+
+.chat-settings-leave-active {
+  animation: chat-window 1s reverse;
+}
+
+@keyframes chats-settings {
+  0% {
+      width: 0%;
+  }
+  100% {
+      width: 15%;
   }
 }
