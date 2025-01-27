@@ -391,14 +391,14 @@ body {
 }
 
 .chat-settings-enter-active {
-  animation: chat-window 1s;
+  animation: chat-settings 0.5s;
 }
 
 .chat-settings-leave-active {
-  animation: chat-window 1s reverse;
+  animation: chat-settings 0.5s reverse;
 }
 
-@keyframes chats-settings {
+@keyframes chat-settings {
   0% {
       width: 0%;
   }

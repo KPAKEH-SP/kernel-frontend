@@ -53,6 +53,7 @@
         } else if (jsonMessage.type == "REJECT") {
             console.log("CALL REUEST REJECTED >>> ", jsonMessage);
             openedCallWindow.value = false;
+            openedAudioChat.value = false;
             callInterlocutor.value = null;
             currentCallRequest.value = null;
             disconnect();

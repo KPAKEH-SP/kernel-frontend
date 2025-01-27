@@ -33,6 +33,8 @@
     .wrapper {
         width: 15%;
         height: 100%;
+
+        overflow: hidden;
     }
 
     .widget {

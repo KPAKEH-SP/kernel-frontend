@@ -16,7 +16,7 @@
         </div>
 
         <div v-if="currentChat.type == 'group'" :class="$style['chat-name']">
-            {{ currentChat.chatInfo.chatName }}    
+            {{ currentChat.chatInfo.chatName }}
         </div>
     </BaseWidget>
 </template>
@@ -41,6 +41,8 @@
 
         width: 15%;
         height: 100%;
+
+        overflow: hidden;
     }
 
     .avatar-second {
