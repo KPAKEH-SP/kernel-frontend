@@ -2,7 +2,7 @@
     <BaseWidget :class="$style.widget">
         <div :class="$style.wrapper">
             <UserAvatar 
-            :username="userDataState.username"
+            :username="message.data.sender"
             :class="$style.avatar"/>
             <div :class="$style.data">
                 <div :class="$style.sender">
